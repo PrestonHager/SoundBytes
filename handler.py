@@ -1,5 +1,6 @@
 import json
 import boto3
+import datetime
 
 # set all the default global variables to None
 dynamo_db = None
@@ -40,7 +41,7 @@ def upload_bite(event, context):
     biteId = biteIdRatio[0] / float(biteIdRatio[1])                                                             # parse it
     biteId = int(biteId + 1)                                                                                    # and add one.
     dynamo_table.update_item(Key = {"BiteId": "-1"}, AttributeUpdates = {"BiteIdNumber": {"Value": biteId}})    # and update the item storing the current bite number.
-    biteItem = {"BiteId": str(biteId), "BiteAudio": str(biteAudioPointer)}
+    biteItem = {"BiteId": str(biteId), "BiteAudio": str(biteAudioPointer), "TimeStamp": datetime.datetime.now().isoformat()}
     dynamo_table.put_item(Item = biteItem)                                                                      # put the item into dynamo DB.
     body = {
         "message": "Go Serverless v1.0! Your function executed successfully!",
