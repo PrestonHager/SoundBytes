@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: aws-python3 # NOTE: update this with your service name
+service: sound-bytes # NOTE: update this with your service name
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -22,8 +22,8 @@ provider:
   runtime: python3.6
 
 # you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
+  stage: dev
+  region: us-west-2
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -52,6 +52,7 @@ provider:
 #    - include-me-dir/**
   exclude:
     - test_function.py
+    - LICENSE
 #    - exclude-me-dir/**
 
 functions:
