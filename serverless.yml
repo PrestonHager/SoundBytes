@@ -97,12 +97,41 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
+resources:
+  Resources:
+   S3Bucket:
+     Type: AWS::S3::Bucket
+     Properties:
+       BucketName: sound-bytes-bites
+   DynamoDBTable:
+     Type: AWS::DynamoDB::Table
+     Properties:
+       TableName: sound-bytes-bites-metadata
+       AttributeDefinitions:
+          - AttributeName: BiteId
+            AttributeType: S
+       KeySchema:
+          - AttributeName: BiteId
+            KeyType: HASH
+       ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+   DynamoDBIamPolicy:
+      Type: AWS::IAM::Policy
+      DependsOn: DynamoDBTable
+      Properties:
+        PolicyName: lambda-dynamodb
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+              Resource: arn:aws:dynamodb:*:*:table/sound-bytes-bites-metadata
+        Roles:
+          - Ref: IamRoleLambdaExecution
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"
