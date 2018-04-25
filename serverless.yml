@@ -51,7 +51,6 @@ provider:
 #    - include-me.py
 #    - include-me-dir/**
   exclude:
-    - test_function.py
     - LICENSE
     - output.json
     - test.mp3
