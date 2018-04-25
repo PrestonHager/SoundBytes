@@ -19,5 +19,5 @@ var/
 # Serverless directories
 .serverless
 
-# The test function file
-test_function.py
+# The test files
+output.json

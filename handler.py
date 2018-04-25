@@ -52,15 +52,19 @@ def upload_bite(event, context):
     dynamo_table.update_item(Key = {"BiteId": "-1"}, AttributeUpdates = {"BiteIdNumber": {"Value": biteId}})    # and update the item storing the current bite number.
     # first check the length of the wave file, needs to be under or at 2 minutes. and more than or equal to 3 seconds.
     mp3_tags = ID3(BufferedReader(audio_file_stream), len(file_data))
-    mp3_tags.load(tags=True, duration=True, image=False)
+    mp3_tags.load(tags=False, duration=True, image=False)
     if mp3_tags.duration < 3 or mp3_tags.duration > 120:
         audio_file_stream.seek(0)
+        audio_file_stream_cont = audio_file_stream.read()
         body = {
             "error": "Audio file too short or too long.",
             "duration": mp3_tags.duration,
             "length": len(file_data),
-            "l2": len(audio_file_stream.read()),
-            "tags": str(mp3_tags)
+            "l2": len(audio_file_stream_cont),
+            "tags": str(mp3_tags),
+            "file-contents": file_data.decode('utf-8'),
+            "file": audio_file_stream_cont.decode('utf-8'),
+            "event": str(event)
         }
         return create_response(body, 400)
     # save the audio file into S3.
