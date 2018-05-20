@@ -42,14 +42,9 @@ def upload_bite(event, context):
     # get the arguemnts
     c_type, c_data = parse_header(event['headers']['Content-Type'])
     assert c_type == 'multipart/form-data'
-    c_data["boundary"] = bytes(c_data["boundary"], 'utf-8')
-    file_data = parse_multipart(BytesIO(event['body'].encode('utf-8')), c_data)["file"][0]      # this is the audio file as a byte array.
+    c_data["boundary"] = bytes(c_data["boundary"], 'utf-16')
+    file_data = parse_multipart(BytesIO(event['body'].encode('utf-16')), c_data)["file"][0]      # this is the audio file as a byte array.
     audio_file_stream = BytesIO(file_data)
-    # put an item with the bite's metadata
-    biteIdRatio = dynamo_table.get_item(Key = {"BiteId": "-1"})["Item"]["BiteIdNumber"].as_integer_ratio()      # get the current byte number.
-    biteId = biteIdRatio[0] / float(biteIdRatio[1])                                                             # parse it
-    biteId = int(biteId + 1)                                                                                    # and add one.
-    dynamo_table.update_item(Key = {"BiteId": "-1"}, AttributeUpdates = {"BiteIdNumber": {"Value": biteId}})    # and update the item storing the current bite number.
     # first check the length of the wave file, needs to be under or at 2 minutes. and more than or equal to 3 seconds.
     mp3_tags = ID3(BufferedReader(audio_file_stream), len(file_data))
     mp3_tags.load(tags=False, duration=True, image=False)
@@ -67,6 +62,11 @@ def upload_bite(event, context):
             "event": str(event)
         }
         return create_response(body, 400)
+    # put an item with the bite's metadata
+    biteIdRatio = dynamo_table.get_item(Key = {"BiteId": "-1"})["Item"]["BiteIdNumber"].as_integer_ratio()      # get the current byte number.
+    biteId = biteIdRatio[0] / float(biteIdRatio[1])                                                             # parse it
+    biteId = int(biteId + 1)                                                                                    # and add one.
+    dynamo_table.update_item(Key = {"BiteId": "-1"}, AttributeUpdates = {"BiteIdNumber": {"Value": biteId}})    # and update the item storing the current bite number.
     # save the audio file into S3.
     biteAudioPointer = upload_s3(audio_file_stream, "{biteId}-bite-audio".format(biteId=biteId))
     # create the bite metadata item and save it to DynamoDB.
