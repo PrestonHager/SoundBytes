@@ -52,6 +52,8 @@ provider:
 #    - include-me-dir/**
   exclude:
     - LICENSE
+    - CONTRIBUTORS.md
+    - SoundsBytesApplication/**
     - output.json
     - test.mp3
     - test2.mp3
