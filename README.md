@@ -16,18 +16,18 @@ Items in *italics* are planned.
   - **Upload audio file metadata to AWS DynamoDB.**
   - *Get an audio file uplaod from a client.*
   - Create a user database, and logins for them.
-  - Make "captions" or computer generated text for each audio file.
-  - Use the "captions" from each audio file to select preferred audio files for users.
-* Application
-  - Create login page for user.
-  - Design basic user interface of "list" of sound bites, and a recording button.
-  - Record audio from the phone and send it to the AWS Lambda.
-  - Get recording audio clips based on the user from the AWS Lambda.
+  - *Make "captions" or computer generated text for each audio file.*
+  - *Use the "captions" from each audio file to select preferred audio files for users.*
+* *Application*
+  - *Create login page for user.*
+  - *Design basic user interface of "list" of sound bites, and a recording button.*
+  - *Record audio from the phone and send it to the AWS Lambda.*
+  - *Get recording audio clips based on the user from the AWS Lambda.*
 
 ## Getting Started
 
 There are two parts to Sound Bytes.
-The front-end, or the application. 
+The front-end, or the application.
 This is written in Android Studio, with plans to write for iOS.
 And the back-end, or the server-side.
 This uses Amazon Web Service's (AWS) lambdas, with Python.
@@ -75,7 +75,7 @@ Simply submit a Pull Request or Issue here on Github.
 * **Preston Hager** - *Lead Programmer* - [Github Profile](https://github.com/PrestonHager)
 * **Jonathan Hager** - *Solution Architect* - [Github Profile](https://github.com/JonathanHager)
 
-See also the list of [contributors](https://github.com/PrestonHager/SoundBytes/blob/master/CONTRIBUTORS.md) who participated in this project.
+Also see the list of [contributors](https://github.com/PrestonHager/SoundBytes/blob/master/CONTRIBUTORS.md) who participated in this project.
 
 ## License
 
