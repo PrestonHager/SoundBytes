@@ -1,3 +1,4 @@
+import base64
 import boto3
 import datetime
 import json
@@ -34,7 +35,10 @@ def upload_s3(file_stream, key):
     # set the client variable we use to the global version.
     global s3_connection
     # upload a file obj/stream to the s3 bucket.
-    s3_connection.upload_fileobj(file_stream, "sound-bytes-bites", key)
+    try:
+        s3_connection.upload_fileobj(file_stream, "sound-bytes-bites", key)
+    except Exception as err:
+        return err
     # return True from the process.
     return True
 
@@ -51,24 +55,36 @@ def upload_bite(event, context):
     init_s3()
     # get the arguemnts
     c_type, c_data = parse_header(event['headers']['Content-Type'])
-    assert c_type == 'multipart/form-data'
+    try:
+        assert c_type == 'multipart/form-data'
+    except:
+        body = {
+            "error": "File was not sent as multipart/form-data.",
+            "error_no": 0
+        }
     c_data["boundary"] = bytes(c_data["boundary"], 'utf-8')
     # this is the audio file as a byte array.
-    file_data = parse_multipart(BytesIO(event['body'].encode('utf-8')), c_data)["file"][0]
+    multiparts = parse_multipart(BytesIO(event['body'].encode('utf-8')), c_data)
+    file_data_raw = b''.join(multiparts["file"]).decode('utf-8')
+    try:
+        file_data = base64.b64decode(file_data_raw)
+    except:
+        body = {
+            "error": "Audio file was not sent with base64 encoding.",
+            "error_no": 1
+        }
+        return create_response(body, 400)
     audio_file_stream = BytesIO(file_data)
     # first check the length of the wave file, needs to be under or at 2 minutes. and more than or equal to 3 seconds.
     mp3_tags = ID3(BufferedReader(audio_file_stream), len(file_data))
     mp3_tags.load(tags=False, duration=True, image=False)
-    if mp3_tags.duration < 3 or mp3_tags.duration > 120:
-        audio_file_stream.seek(0)
-        audio_file_stream_cont = audio_file_stream.read()
+    if mp3_tags.duration < 2 or mp3_tags.duration > 121:
         body = {
             "error": "Audio file too short or too long.",
-            "duration": mp3_tags.duration,
-            "tags": json.dumps(repr(mp3_tags).replace("'", "\"")),
-            "file": audio_file_stream_cont.decode('utf-8'),
+            "error_no": 2,
+            "duration": mp3_tags.duration
         }
-        #return create_response(body, 400)
+        return create_response(body, 400)
     # put an item with the bite's metadata
     # get the current byte number.
     biteIdRatio = dynamo_table.get_item(Key = {"BiteId": "-1"})["Item"]["BiteIdNumber"].as_integer_ratio()
@@ -80,13 +96,14 @@ def upload_bite(event, context):
     dynamo_table.update_item(Key = {"BiteId": "-1"}, AttributeUpdates = {"BiteIdNumber": {"Value": biteId}})
     # save the audio file into S3.
     audio_file_stream.seek(0) # first reset the audio stream to the start.
-    biteAudioPointer = upload_s3(audio_file_stream, "{biteId}-bite-audio.mp3".format(biteId=biteId))
+    assert upload_s3(audio_file_stream, "{biteId}-bite-audio.mp3".format(biteId=biteId))
     # create the bite metadata item and save it to DynamoDB.
-    biteItem = {"BiteId": str(biteId), "BiteAudio": str(biteAudioPointer), "TimeStamp": datetime.datetime.now().isoformat()}
+    biteItem = {"BiteId": str(biteId), "BiteAudio": "{biteId}-bite-audio.mp3".format(biteId=biteId), "TimeStamp": datetime.datetime.now().isoformat()}
     # put the item into dynamo DB.
     dynamo_table.put_item(Item = biteItem)
     body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!"
+        "message": "Successfully uploaded Sound Bite.",
+        "biteId": biteId
     }
     # return the response with code 201 (created).
     response = create_response(body, 201)
