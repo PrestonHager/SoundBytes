@@ -26,7 +26,11 @@ provider:
   region: us-west-2
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+      Resource: "arn:aws:s3:::sound-bytes-bites/*"
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:ListBucket"
