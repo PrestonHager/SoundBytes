@@ -11,11 +11,11 @@ Items in **bold** have been completed.
 Items in plain text are in progress.
 Items in *italics* are planned.
 
-* *AWS Lambda*
+* AWS Lambda
   - **Upload an audio file to AWS S3.**
   - **Upload audio file metadata to AWS DynamoDB.**
   - **Test audio file length to make sure it's between 3 and 120 seconds.**
-  - *Get an audio file uplaod from a client.*
+  - **Get an audio file uplaod from a client.**
   - Create a user database, and logins for them.
   - *Make "captions" or computer generated text for each audio file.*
   - *Use the "captions" from each audio file to select preferred audio files for users.*
