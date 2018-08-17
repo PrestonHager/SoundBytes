@@ -16,11 +16,13 @@ Items in *italics* are planned.
   - **Upload audio file metadata to AWS DynamoDB.**
   - **Test audio file length to make sure it's between 3 and 120 seconds.**
   - **Get an audio file uplaod from a client.**
-  - Create a user database, and logins for them.
+  - **Create a user database, and logins for them.**
   - *Make "captions" or computer generated text for each audio file.*
   - *Use the "captions" from each audio file to select preferred audio files for users.*
 * *Application*
+  - *Create landing page and icons.*
   - *Create login page for user.*
+  - *Store login credentials in phone for a smother user exprience.*
   - *Design basic user interface of "list" of sound bites, and a recording button.*
   - *Record audio from the phone and send it to the AWS Lambda.*
   - *Get recording audio clips based on the user from the AWS Lambda.*
