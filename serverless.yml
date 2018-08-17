@@ -31,19 +31,25 @@ provider:
       Action:
         - "s3:PutObject"
       Resource: "arn:aws:s3:::sound-bytes-bites/*"
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+      Resource: arn:aws:dynamodb:*:*:table/sound-bytes-bites-metadata
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:*:*:table/sound-bytes-auth
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+      Resource: arn:aws:dynamodb:*:*:table/sound-bytes-users
 
 # you can define service wide environment variables here
 #  environment:
@@ -57,7 +63,13 @@ package:
     - SoundsBytesApplication/**
     - test.mp3
     - test.mp3.base64
-#  include:
+  include:
+    - handler.py
+    - six.py
+    - argon2/**
+    - cffi/**
+    - pycparser/**
+    - tinytag/**
 #    - include-me.py
 #    - include-me-dir/**
 
@@ -67,6 +79,18 @@ functions:
     events:
       - http:
           path: upload-bite
+          method: post
+  login:
+    handler: handler.login
+    events:
+      - http:
+          path: auth
+          method: post
+  create_account:
+    handler: handler.create_account
+    events:
+      - http:
+          path: create-account
           method: post
 
 #    The following are a few example events you can configure
@@ -122,22 +146,32 @@ resources:
        ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
-   DynamoDBIamPolicy:
-      Type: AWS::IAM::Policy
-      DependsOn: DynamoDBTable
-      Properties:
-        PolicyName: lambda-dynamodb
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - dynamodb:GetItem
-                - dynamodb:PutItem
-                - dynamodb:UpdateItem
-              Resource: arn:aws:dynamodb:*:*:table/sound-bytes-bites-metadata
-        Roles:
-          - Ref: IamRoleLambdaExecution
+   DynamoDBTableAuth:
+     Type: AWS::DynamoDB::Table
+     Properties:
+       TableName: sound-bytes-auth
+       AttributeDefinitions:
+          - AttributeName: ClientId
+            AttributeType: S
+       KeySchema:
+          - AttributeName: ClientId
+            KeyType: HASH
+       ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+   DynamoDBTableUsers:
+     Type: AWS::DynamoDB::Table
+     Properties:
+       TableName: sound-bytes-users
+       AttributeDefinitions:
+          - AttributeName: Username
+            AttributeType: S
+       KeySchema:
+          - AttributeName: Username
+            KeyType: HASH
+       ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"
