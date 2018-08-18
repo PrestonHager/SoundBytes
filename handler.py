@@ -37,6 +37,12 @@ class App:
             import hashlib
             import json
             import os
+        elif function == "refresh_client":
+            global boto3, datetime, json, random
+            import boto3
+            import datetime
+            import json
+            import random
 
     def _init_dynamodb(self):
         # set the dynamo_db and dynamo_table variables to their
@@ -91,7 +97,7 @@ class App:
         self.init_auth_db()
         token = event["headers"]["Authorization"]
         try:
-            client_item = self.auth_table.get(Key = {"ClientId": token})["Item"]
+            client_item = self.auth_table.get_item(Key = {"ClientId": token})["Item"]
         except:
             body = {
                 "err": "Invalid Client ID token.",
@@ -99,16 +105,34 @@ class App:
             }
             return self.create_response(body, 400)
         current_time = int((datetime.datetime.now() - datetime.datetime(year=1970, month=1, day=1, hour=0, second=0)).total_seconds())
+        self.auth_table.delete_item(Key = {"ClientId": token})
+        all_ids = self.auth_table.get_item(Key = {"ClientId": "-1"})["Item"]["AllIds"]
+        all_ids.pop(all_ids.index(token))
+        self.auth_table.update_item(Key = {"ClientId": "-1"}, AttributeUpdates = {"AllIds": {"Value": all_ids}})
         if client_item["Expires"]+1800 <= current_time:
-            self.auth_table.delete_item(Key = {"ClientId": token})
-            all_ids = self.auth_table.get_item(Key = {"ClientId": "-1"})["Item"]["AllIds"]
-            all_ids.pop(all_ids.index(token))
-            self.auth_table.update_item(Key = {"ClientId": "-1"}, AttributeUpdates = {"AllIds": {"Value": all_ids}})
             body = {
                 "err": "Client ID token has expired.",
                 "cod": 8
             }
             return self.create_response(body, 400)
+        # check to see if the refresh token matches the client id.
+        if client_item["RefreshToken"] != event["body"]:
+            body = {
+                "err": "Refresh token does not match Client ID token.",
+                "cod": 9
+            }
+            return self.create_response(body, 400)
+        # otherwise a new client id token can be created, and the old deleted.
+        refresh_token = "%032x" % random.randrange(16**32)
+        access_token = self.generate_client_id(client_item["User"], refresh_token, current_time)
+        body = {
+            "id": access_token, # used to request resources or attach to uploaded resources.
+            "rt": refresh_token, # the refresh token is used to get a new access token.
+            "iat": current_time, # the issued at time is the current time.
+            "exp": 3600, # the access token is valid for 1 hour.
+        }
+        response = self.create_response(body, 200)
+        return response
 
     def upload_bite(self, event, context):
         self._import("upload")
@@ -207,7 +231,7 @@ class App:
             id = "%032x" % random.randrange(16**32)
         all_ids.append(id)
         self.auth_table.update_item(Key = {"ClientId": "-1"}, AttributeUpdates = {"AllIds": {"Value": all_ids}})
-        client_item = {"ClientId": id, "RefreshToken": refresh_token, "IssueTime": current_time, "Expires": current_time+3600}
+        client_item = {"ClientId": id, "RefreshToken": refresh_token, "IssueTime": current_time, "Expires": current_time+3600, "User": user}
         self.auth_table.put_item(Item = client_item)
         return id
 
@@ -265,3 +289,4 @@ _inst = App()
 upload_bite = _inst.upload_bite
 login = _inst.login
 create_account = _inst.create_account
+refresh_client = _inst.refresh_client
