@@ -1,24 +1,20 @@
 package com.hagerfamily.soundbytes;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONObject;
-
-import java.io.DataOutputStream;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class LoginActivity extends AppCompatActivity {
 
     private SharedPreferences sp;
     private SharedPreferences.Editor spEditor;
     private ServerRequester requester = new ServerRequester();
+    private TextView errorTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +22,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         sp = getSharedPreferences("ClientTokens", MODE_PRIVATE);
-        spEditor = sp.edit();
+
+        findViewById(R.id.usernameEntry).requestFocus();
+        errorTextView = findViewById(R.id.errorTextView);
     }
 
     @Override
@@ -41,14 +39,24 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordEntry.getText().toString();
         try {
             JSONObject loginTokens = loginRequest(username, password);
-            spEditor.putString("AccessToken", loginTokens.getString("id"));
-            spEditor.putString("RefreshToken", loginTokens.getString("rt"));
-            spEditor.putInt("IssuedAt", loginTokens.getInt("iat"));
-            spEditor.putInt("ExpiresAt", loginTokens.getInt("exp"));
+            if (loginTokens.getInt("cod") > 100) {
+                spEditor = sp.edit();
+                spEditor.putString("AccessToken", loginTokens.getString("id"));
+                spEditor.putString("RefreshToken", loginTokens.getString("rt"));
+                spEditor.putInt("IssuedAt", loginTokens.getInt("iat"));
+                spEditor.putInt("ExpiresAt", loginTokens.getInt("exp"));
+                spEditor.apply();
+            } else {
+                String error = loginTokens.getString("err");
+                String code = String.format("%s", loginTokens.getInt("cod"));
+                String errorMsg = "Error (" + code + ") " + error;
+                errorTextView.setText(errorMsg);
+                errorTextView.setVisibility(View.VISIBLE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            Intent loginIntent = new Intent(this, LoginActivity.class);
-            startActivity(loginIntent);
+            errorTextView.setText(R.string.error_connection);
+            errorTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -77,10 +85,13 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 // error is displayed.
                 String error = signupRequest.getString("err");
+                String code = String.format("%s", signupRequest.getInt("cod"));
+                String errorMsg = "Error (" + code + ") " + error;
+                errorTextView.setText(errorMsg);
+                errorTextView.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
     }
 
@@ -91,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
             json.put("username", username);
             json.put("password", password);
 
-            return requester.JSONrequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/prod/auth");
+            return requester.JSONRequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/prod/auth");
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();
@@ -106,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             json.put("password", password);
             json.put("email", email);
 
-            return requester.JSONrequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/prod/create-account");
+            return requester.JSONRequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/prod/create-account");
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();

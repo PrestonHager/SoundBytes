@@ -8,7 +8,7 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 public class ServerRequester {
-    public JSONObject JSONrequest(JSONObject json, String url) {
+    public JSONObject JSONRequest(JSONObject json, String url) {
         try {
             String jsonString = json.toString();
 
