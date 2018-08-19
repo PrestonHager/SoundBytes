@@ -73,7 +73,7 @@ functions:
       - http:
           path: auth
           method: post
-  create_account:
+  create-account:
     handler: handler.create_account
     events:
       - http:
@@ -84,6 +84,12 @@ functions:
     events:
       - http:
           path: refresh-token
+          method: post
+  verify-email:
+    handler: handler.verify_email
+    events:
+      - http:
+          path: verify
           method: post
 
 # you can add CloudFormation resource templates here

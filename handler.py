@@ -318,8 +318,15 @@ class App:
             }
             return self.create_response(body, 201)
 
+    def verify_email(self, event, context):
+        body = {
+            "cod": 100
+        }
+        return self.create_response(body, 200)
+
 _inst = App()
 upload_bite = _inst.upload_bite
 login = _inst.login
 create_account = _inst.create_account
 refresh_client = _inst.refresh_client
+verify_email = _inst.verify_email
