@@ -130,6 +130,7 @@ class App:
             "rt": refresh_token, # the refresh token is used to get a new access token.
             "iat": current_time, # the issued at time is the current time.
             "exp": 3600, # the access token is valid for 1 hour.
+            "cod": 100 # the code is a success.
         }
         response = self.create_response(body, 200)
         return response
@@ -264,6 +265,7 @@ class App:
             "rt": refresh_token, # the refresh token is used to get a new access token.
             "iat": current_time, # the issued at time is the current time.
             "exp": 3600, # the access token is valid for 1 hour.
+            "cod": 100, # the code is a success.
         }
         response = self.create_response(body, 200)
         return response
@@ -283,7 +285,10 @@ class App:
             password_hash = hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest()
             user = {"Username": data["username"], "Password": base64.b64encode(password_hash).decode("utf-8")}
             self.users.put_item(Item = user)
-            return self.create_response({}, 201)
+            body = {
+                "cod": 101
+            }
+            return self.create_response(body, 201)
 
 _inst = App()
 upload_bite = _inst.upload_bite
