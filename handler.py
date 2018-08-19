@@ -256,6 +256,12 @@ class App:
                 "cod": 4
             }
             return self.create_response(body, 401)
+        if user["Verified"] == false:
+            body = {
+                "err": "Please verify your email.",
+                "cod": 12
+            }
+            return self.create_response(body, 400)
         self._import("login")
         self.init_auth_db()
         current_time = int((datetime.datetime.now() - datetime.datetime(year=1970, month=1, day=1, hour=0, second=0)).total_seconds())
