@@ -36,6 +36,8 @@ public class SplashPage extends AppCompatActivity {
                 spEditor.putInt("IssuedAt", loginTokens.getInt("iat"));
                 spEditor.putInt("ExpiresAt", loginTokens.getInt("exp"));
                 spEditor.apply();
+                Intent mainActivityIntent = new Intent(this, MainActivity.class);
+                startActivity(mainActivityIntent);
             } catch (Exception e) {
                 e.printStackTrace();
                 Intent loginIntent = new Intent(this, LoginActivity.class);
@@ -51,7 +53,7 @@ public class SplashPage extends AppCompatActivity {
             json.put("username", username);
             json.put("password", password);
 
-            return requester.JSONRequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/prod/auth");
+            return requester.JSONRequest(json, "https://faidg1ey0l.execute-api.us-west-2.amazonaws.com/prod/auth");
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();

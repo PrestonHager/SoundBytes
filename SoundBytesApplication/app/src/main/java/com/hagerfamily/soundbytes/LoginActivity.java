@@ -1,5 +1,6 @@
 package com.hagerfamily.soundbytes;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -46,10 +47,12 @@ public class LoginActivity extends AppCompatActivity {
                 spEditor.putInt("IssuedAt", loginTokens.getInt("iat"));
                 spEditor.putInt("ExpiresAt", loginTokens.getInt("exp"));
                 spEditor.apply();
+                Intent mainActivityIntent = new Intent(this, MainActivity.class);
+                startActivity(mainActivityIntent);
             } else {
                 String error = loginTokens.getString("err");
                 String code = String.format("%s", loginTokens.getInt("cod"));
-                String errorMsg = "Error (" + code + ") " + error;
+                String errorMsg = R.string.error_default + " (" + code + ") " + error;
                 errorTextView.setText(errorMsg);
                 errorTextView.setVisibility(View.VISIBLE);
             }
@@ -78,10 +81,14 @@ public class LoginActivity extends AppCompatActivity {
             JSONObject signupRequest = signupRequest(username, password, email);
             if (signupRequest.getInt("cod") > 100) {
                 JSONObject loginTokens = loginRequest(username, password);
+                spEditor = sp.edit();
                 spEditor.putString("AccessToken", loginTokens.getString("id"));
                 spEditor.putString("RefreshToken", loginTokens.getString("rt"));
                 spEditor.putInt("IssuedAt", loginTokens.getInt("iat"));
                 spEditor.putInt("ExpiresAt", loginTokens.getInt("exp"));
+                spEditor.apply();
+                Intent mainActivityIntent = new Intent(this, MainActivity.class);
+                startActivity(mainActivityIntent);
             } else {
                 // error is displayed.
                 String error = signupRequest.getString("err");
@@ -102,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
             json.put("username", username);
             json.put("password", password);
 
-            return requester.JSONRequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/prod/auth");
+            return requester.JSONRequest(json, "https://faidg1ey0l.execute-api.us-west-2.amazonaws.com/prod/auth");
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();
@@ -117,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
             json.put("password", password);
             json.put("email", email);
 
-            return requester.JSONRequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/prod/create-account");
+            return requester.JSONRequest(json, "https://faidg1ey0l.execute-api.us-west-2.amazonaws.com/prod/create-account");
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();

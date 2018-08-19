@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashPage"
+        <activity
+            android:name=".SplashPage"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,8 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity"
+        <activity
+            android:name=".LoginActivity"
             android:theme="@style/AppTheme" />
+        <activity android:name=".MainActivity"></activity>
     </application>
 
 </manifest>
