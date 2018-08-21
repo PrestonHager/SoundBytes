@@ -304,7 +304,7 @@ class App:
         except:
             # validate the email string.
             # NOTE: the is a very basic regex and is not the complete offical.
-            if not re.match(r"[a-zA-Z0-9\.-]+@[a-zA-Z0-9-]\.[a-zA-Z0-9]", data["email"]):
+            if not re.match(r"[a-zA-Z0-9\.-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9]+", data["email"]):
                 body = {
                     "err": "Invalid email address.",
                     "cod": 10

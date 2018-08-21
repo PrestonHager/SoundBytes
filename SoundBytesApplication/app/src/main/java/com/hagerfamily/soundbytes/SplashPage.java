@@ -49,7 +49,6 @@ public class SplashPage extends AppCompatActivity {
     private JSONObject loginRequest(String username, String password) {
         try {
             JSONObject json = new JSONObject();
-            json.put("protocolVersion", "1.0");
             json.put("username", username);
             json.put("password", password);
 
