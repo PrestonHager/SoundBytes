@@ -311,7 +311,7 @@ class App:
                 }
                 return self.create_response(body, 400)
             password_hash = hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest()
-            user = {"Username": data["username"], "Password": base64.b64encode(password_hash).decode("utf-8"), "Email": data["email"], "Verified": false}
+            user = {"Username": data["username"], "Password": base64.b64encode(password_hash).decode("utf-8"), "Email": data["email"], "Verified": False}
             self.users.put_item(Item = user)
             body = {
                 "cod": 101
