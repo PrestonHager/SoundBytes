@@ -34,7 +34,7 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="ffffff" />
+                                      <entry key="backgroundColor" value="3aaed8" />
                                       <entry key="foregroundImage" value="C:\Users\discover\Documents\PrestonDeveloping\SoundBytes\SoundBytesApplication\app\src\main\res\drawable\sound_bytes_logo.png" />
                                     </map>
                                   </option>

@@ -2,6 +2,8 @@ package com.hagerfamily.soundbytes;
 
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 
@@ -14,7 +16,9 @@ public class ServerRequester {
         private String contentType;
         private String acceptType;
         private String data;
+        private Integer responseCode;
         private String response;
+        private Boolean sendData;
 
         public void run() {
             try {
@@ -24,13 +28,18 @@ public class ServerRequester {
                 request.setRequestMethod(method);
                 request.setRequestProperty("Content-Type", contentType);
                 request.setRequestProperty("Accept", acceptType);
-                request.setDoOutput(true);
+                request.setDoOutput(sendData);
                 request.setDoInput(true);
 
-                OutputStreamWriter os = new OutputStreamWriter(request.getOutputStream());
-                os.write(data);
+                OutputStream os = request.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(data);
+                writer.flush();
+                writer.close();
                 os.close();
+                request.connect();
 
+                responseCode = request.getResponseCode();
                 response = request.getResponseMessage();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -43,11 +52,23 @@ public class ServerRequester {
             this.contentType = contentType;
             this.acceptType = acceptType;
             this.data = data;
+            this.sendData = true;
+            start();
+        }
+        Request(String url, String method, String contentType, String acceptType) {
+            this.url = url;
+            this.method = method;
+            this.contentType = contentType;
+            this.acceptType = acceptType;
             start();
         }
 
+
         private String getResponse() {
             return response;
+        }
+        private Integer getResponseCode() {
+            return responseCode;
         }
     }
 
