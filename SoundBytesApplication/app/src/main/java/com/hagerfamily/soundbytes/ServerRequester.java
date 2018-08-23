@@ -63,7 +63,6 @@ public class ServerRequester {
             start();
         }
 
-
         private String getResponse() {
             return response;
         }
