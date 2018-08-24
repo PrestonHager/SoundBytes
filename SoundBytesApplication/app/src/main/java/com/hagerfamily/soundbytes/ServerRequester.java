@@ -3,9 +3,12 @@ package com.hagerfamily.soundbytes;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -32,8 +35,8 @@ public class ServerRequester {
                 request.setDoInput(true);
 
                 OutputStream os = request.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(data);
+                DataOutputStream writer = new DataOutputStream(request.getOutputStream());
+                writer.writeBytes(data);
                 writer.flush();
                 writer.close();
                 os.close();
@@ -77,7 +80,14 @@ public class ServerRequester {
 
             Request request = new Request(url, "POST", "application/json", "application/json", jsonString);
             request.join();
-            return new JSONObject(request.getResponse());
+            String response = request.getResponse();
+            Logger.getGlobal().log(Level.INFO, response);
+            if (request.getResponseCode() >= 200 && request.getResponseCode() < 300) {
+                return new JSONObject(response);
+            }
+            else {
+                return new JSONObject();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();

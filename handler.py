@@ -256,7 +256,7 @@ class App:
                 "cod": 4
             }
             return self.create_response(body, 401)
-        if user["Verified"] == false:
+        if user["Verified"] == False:
             body = {
                 "err": "Please verify your email.",
                 "cod": 12
