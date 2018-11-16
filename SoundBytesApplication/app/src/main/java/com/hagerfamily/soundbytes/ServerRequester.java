@@ -2,8 +2,10 @@ package com.hagerfamily.soundbytes;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
@@ -34,16 +36,27 @@ public class ServerRequester {
                 request.setDoOutput(sendData);
                 request.setDoInput(true);
 
-                OutputStream os = request.getOutputStream();
-                DataOutputStream writer = new DataOutputStream(request.getOutputStream());
-                writer.writeBytes(data);
-                writer.flush();
-                writer.close();
-                os.close();
-                request.connect();
+                if (sendData) {
+                    OutputStream os = request.getOutputStream();
+                    DataOutputStream writer = new DataOutputStream(request.getOutputStream());
+                    writer.writeBytes(data);
+                    writer.flush();
+                    writer.close();
+                    os.close();
+                    request.connect();
+                }
 
                 responseCode = request.getResponseCode();
-                response = request.getResponseMessage();
+                BufferedReader input = new BufferedReader(
+                        new InputStreamReader(request.getInputStream()));
+                String inputLine;
+                StringBuffer responseBuffer = new StringBuffer();
+
+                while ((inputLine = input.readLine()) != null) {
+                    responseBuffer.append(inputLine);
+                }
+                input.close();
+                response = responseBuffer.toString();
             } catch (Exception e) {
                 e.printStackTrace();
             }

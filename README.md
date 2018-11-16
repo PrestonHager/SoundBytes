@@ -58,7 +58,7 @@ npm install -g serverless
 ```
 
 Then run `serverless --version` to make sure it's installed.
-The back-end can be found in the folder, `SoundBytesLambda`.
+The back-end can be found in the main folder.
 
 ## Built With
 

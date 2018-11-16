@@ -31,19 +31,23 @@ class App:
             import json
             import os
         elif function == "create_account":
-            global base64, boto3, hashlib, json, re, os
+            global base64, boto3, hashlib, json, re, os, DEFAULT_INTRESTS
             import base64
             import boto3
             import hashlib
             import json
             import re
             import os
+            from intrests import DEFAULT_INTRESTS
         elif function == "refresh_client":
             global boto3, datetime, json, random
             import boto3
             import datetime
             import json
             import random
+        elif function == "get_bites":
+            global json
+            import json
 
     def _init_dynamodb(self):
         # set the dynamo_db and dynamo_table variables to their
@@ -135,6 +139,16 @@ class App:
         }
         response = self.create_response(body, 200)
         return response
+
+    def get_bites(self, event, context):
+        # for now just a test post will be put up infinitely.
+        # eventually this will have a user put there token in Authorization header
+        # then an AI will match posts to them, these post ids will be stored somewhere.
+        body = {
+            "cod": 100,
+            "all_posts": [{"t":"Title Goes Here","b":"This is a body paragraph, the maximum is 256 characters long."}]
+        }
+        return self.create_response(body, 400)
 
     def upload_bite(self, event, context):
         self._import("upload")
@@ -311,7 +325,7 @@ class App:
                 }
                 return self.create_response(body, 400)
             password_hash = hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest()
-            user = {"Username": data["username"], "Password": base64.b64encode(password_hash).decode("utf-8"), "Email": data["email"], "Verified": False}
+            user = {"Username": data["username"], "Password": base64.b64encode(password_hash).decode("utf-8"), "Email": data["email"], "Verified": False, "Intrests": DEFAULT_INTRESTS}
             self.users.put_item(Item = user)
             body = {
                 "cod": 101

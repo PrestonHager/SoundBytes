@@ -1,18 +1,20 @@
 package com.hagerfamily.soundbytes;
 
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
 
-    private SharedPreferences sp;
+    public static Integer[] viewLayouts = {R.layout.feed_fragment, R.layout.activity_new_post, R.layout.activity_settings};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sp = getSharedPreferences("ClientTokens", MODE_PRIVATE);
+        MainActivityPagerAdapter activityPagerAdapter = new MainActivityPagerAdapter(getSupportFragmentManager());
+        ViewPager activityViewPager = findViewById(R.id.pager);
+        activityViewPager.setAdapter(activityPagerAdapter);
     }
 }

@@ -12,8 +12,8 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private SharedPreferences sp;
-    private SharedPreferences.Editor spEditor;
+    private SharedPreferences clientTokensSp;
+    private SharedPreferences loginSp;
     private ServerRequester requester = new ServerRequester();
     private TextView errorTextView;
 
@@ -22,7 +22,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        sp = getSharedPreferences("ClientTokens", MODE_PRIVATE);
+        clientTokensSp = getSharedPreferences("ClientTokens", MODE_PRIVATE);
+        loginSp = getSharedPreferences("Login", MODE_PRIVATE);
 
         findViewById(R.id.usernameEntry).requestFocus();
         errorTextView = findViewById(R.id.errorTextView);
@@ -31,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // do nothing when the back button is pressed.
+        // TODO: exit the app.
     }
 
     public void onLoginButtonPressed(View v) {
@@ -40,13 +42,17 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordEntry.getText().toString();
         try {
             JSONObject loginTokens = loginRequest(username, password);
-            if (loginTokens.getInt("cod") > 100) {
-                spEditor = sp.edit();
-                spEditor.putString("AccessToken", loginTokens.getString("id"));
-                spEditor.putString("RefreshToken", loginTokens.getString("rt"));
-                spEditor.putInt("IssuedAt", loginTokens.getInt("iat"));
-                spEditor.putInt("ExpiresAt", loginTokens.getInt("exp"));
-                spEditor.apply();
+            if (loginTokens.getInt("cod") >= 100) {
+                SharedPreferences.Editor loginSpEditor = loginSp.edit();
+                loginSpEditor.putString("Username", username);
+                loginSpEditor.putString("Password", password);
+                loginSpEditor.apply();
+                SharedPreferences.Editor clientTokensSpEditor = clientTokensSp.edit();
+                clientTokensSpEditor.putString("AccessToken", loginTokens.getString("id"));
+                clientTokensSpEditor.putString("RefreshToken", loginTokens.getString("rt"));
+                clientTokensSpEditor.putInt("IssuedAt", loginTokens.getInt("iat"));
+                clientTokensSpEditor.putInt("ExpiresAt", loginTokens.getInt("exp")+loginTokens.getInt("iat"));
+                clientTokensSpEditor.apply();
                 Intent mainActivityIntent = new Intent(this, MainActivity.class);
                 startActivity(mainActivityIntent);
             } else {
@@ -69,7 +75,9 @@ public class LoginActivity extends AppCompatActivity {
         EditText passwordEntryVerify = findViewById(R.id.passwordEntryVerifySignup);
         String password = passwordEntry.getText().toString();
         String passwordVerify = passwordEntryVerify.getText().toString();
-        if (password != passwordVerify) {
+        if (!password.equals(passwordVerify)) {
+            errorTextView.setText(R.string.error_password_match);
+            errorTextView.setVisibility(View.VISIBLE);
             return;
         }
         // otherwise send a request with all the info to the authentication server.
@@ -79,21 +87,13 @@ public class LoginActivity extends AppCompatActivity {
         String email = emailEntry.getText().toString();
         try {
             JSONObject signupRequest = signupRequest(username, password, email);
-            if (signupRequest.getInt("cod") > 100) {
-                JSONObject loginTokens = loginRequest(username, password);
-                spEditor = sp.edit();
-                spEditor.putString("AccessToken", loginTokens.getString("id"));
-                spEditor.putString("RefreshToken", loginTokens.getString("rt"));
-                spEditor.putInt("IssuedAt", loginTokens.getInt("iat"));
-                spEditor.putInt("ExpiresAt", loginTokens.getInt("exp"));
-                spEditor.apply();
-                Intent mainActivityIntent = new Intent(this, MainActivity.class);
-                startActivity(mainActivityIntent);
+            if (signupRequest.getInt("cod") >= 100) {
+                errorTextView.setText(R.string.signup_verify);
+                errorTextView.setVisibility(View.VISIBLE);
             } else {
-                // error is displayed.
                 String error = signupRequest.getString("err");
                 String code = String.format("%s", signupRequest.getInt("cod"));
-                String errorMsg = "Error (" + code + ") " + error;
+                String errorMsg = R.string.error_default + " (" + code + ") " + error;
                 errorTextView.setText(errorMsg);
                 errorTextView.setVisibility(View.VISIBLE);
             }

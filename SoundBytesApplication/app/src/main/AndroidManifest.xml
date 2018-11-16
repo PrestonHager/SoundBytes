@@ -24,7 +24,9 @@
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".NewPostActivity" />
+        <activity android:name=".SettingsActivity" />
     </application>
 
 </manifest>

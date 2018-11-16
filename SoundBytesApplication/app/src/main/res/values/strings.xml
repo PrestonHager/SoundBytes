@@ -4,6 +4,9 @@
     <!-- Strings related to Splash page -->
     <string name="splash_image_description">The Sound Bytes Logo.</string>
     <string name="title_activity_login">Login</string>
+    <string name="title_activity_main">Sound Bytes</string>
+    <string name="title_activity_new">New Post</string>
+    <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to login page -->
     <string name="login_title">Login or Signup</string>
@@ -17,9 +20,15 @@
     <string name="email_text">Email:</string>
     <string name="email_entry">Email</string>
     <string name="signup_button_text">Signup</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="signup_verify">Please verify your signup by clicking the link sent to your email.</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="error_default">Error</string>
     <string name="error_connection">Error: you may not have a strong internet connection.</string>
+    <string name="error_password_match">Error: the passwords do not match.</string>
+
+    <!-- Strings related to feed page -->
+    <string name="errorFeedUpdate">Unable to update feed.</string>
+    <string name="post_title">Post Title</string>
+    <string name="post_body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eleifend lorem felis, a consectetur dui ullamcorper nec. Cras sagittis vitae nibh et dapibus. Praesent lorem eros, maximus nec leo tempus, egestas dictum felis. Nulla vehicula.</string>
 </resources>

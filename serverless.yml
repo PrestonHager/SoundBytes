@@ -91,6 +91,12 @@ functions:
       - http:
           path: verify
           method: post
+  get-bites:
+    handler: handler.get_bites
+    events:
+      - http:
+          path: get-bites
+          method: get
 
 # you can add CloudFormation resource templates here
 resources:
