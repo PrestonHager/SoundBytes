@@ -46,7 +46,8 @@ class App:
             import json
             import random
         elif function == "get_bites":
-            global json
+            global boto3, json
+            import boto3
             import json
 
     def _init_dynamodb(self):
@@ -141,14 +142,32 @@ class App:
         return response
 
     def get_bites(self, event, context):
+        self._import("get_bites")
+        # initialize the authorization database so we can authenticate the user.
+        self.init_auth_db()
         # for now just a test post will be put up infinitely.
         # eventually this will have a user put there token in Authorization header
         # then an AI will match posts to them, these post ids will be stored somewhere.
+        if "Authorization" not in event["headers"]:
+            body = {
+                "err": "No Authorization header found.",
+                "cod": 13
+            }
+            return self.create_response(body, 403)
+        token = event["headers"]["Authorization"].strip("Token ")
+        try:
+            client_item = self.auth_table.get_item(Key = {"ClientId": token})["Item"]
+        except:
+            body = {
+                "err": "Invalid Client ID token.",
+                "cod": 6
+            }
+            return self.create_response(body, 403)
         body = {
             "cod": 100,
             "all_posts": [{"t":"Title Goes Here","b":"This is a body paragraph, the maximum is 256 characters long."}]
         }
-        return self.create_response(body, 400)
+        return self.create_response(body, 200)
 
     def upload_bite(self, event, context):
         self._import("upload")
@@ -262,8 +281,11 @@ class App:
                 "err": "Username was not found, or not given.",
                 "cod": 3
             }
+            print("username not found. data was " +  data["username"])
             return self.create_response(body, 400)
+        print(data["password"])
         password_hash = hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest()
+        print(password_hash)
         if password_hash != base64.b64decode(user["Password"]):
             body = {
                 "err": "Password does not match for user.",
@@ -275,6 +297,7 @@ class App:
                 "err": "Please verify your email.",
                 "cod": 12
             }
+            print("email not verified for " +  data["username"] + ". declining login.");
             return self.create_response(body, 400)
         self._import("login")
         self.init_auth_db()
@@ -344,3 +367,4 @@ login = _inst.login
 create_account = _inst.create_account
 refresh_client = _inst.refresh_client
 verify_email = _inst.verify_email
+get_bites = _inst.get_bites

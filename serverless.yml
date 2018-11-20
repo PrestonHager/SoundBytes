@@ -39,8 +39,8 @@ provider:
       Resource: arn:aws:dynamodb:*:*:table/sound-bytes-users
 
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+environment:
+  stage: ${opt:stage, 'dev'}
 
 # you can add packaging information here
 package:
@@ -57,8 +57,6 @@ package:
     - cffi/**
     - pycparser/**
     - tinytag/**
-#    - include-me.py
-#    - include-me-dir/**
 
 functions:
   upload-bite:

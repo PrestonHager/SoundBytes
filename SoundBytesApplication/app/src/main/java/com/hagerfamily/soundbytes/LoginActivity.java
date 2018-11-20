@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -53,6 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                 clientTokensSpEditor.putInt("IssuedAt", loginTokens.getInt("iat"));
                 clientTokensSpEditor.putInt("ExpiresAt", loginTokens.getInt("exp")+loginTokens.getInt("iat"));
                 clientTokensSpEditor.apply();
+                Log.i("LoginActivity", "Logged in and set Tokens to storage. Now moving to main activity.");
                 Intent mainActivityIntent = new Intent(this, MainActivity.class);
                 startActivity(mainActivityIntent);
             } else {
@@ -108,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
             json.put("username", username);
             json.put("password", password);
 
-            return requester.JSONRequest(json, "https://faidg1ey0l.execute-api.us-west-2.amazonaws.com/prod/auth");
+            return requester.JSONRequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/dev/auth");
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();
@@ -122,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
             json.put("password", password);
             json.put("email", email);
 
-            return requester.JSONRequest(json, "https://faidg1ey0l.execute-api.us-west-2.amazonaws.com/prod/create-account");
+            return requester.JSONRequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/dev/create-account");
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();

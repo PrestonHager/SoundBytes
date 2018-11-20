@@ -4,9 +4,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 
-public class MainActivity extends FragmentActivity {
-
-    public static Integer[] viewLayouts = {R.layout.feed_fragment, R.layout.activity_new_post, R.layout.activity_settings};
+public class MainActivity extends FragmentActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,4 +15,5 @@ public class MainActivity extends FragmentActivity {
         ViewPager activityViewPager = findViewById(R.id.pager);
         activityViewPager.setAdapter(activityPagerAdapter);
     }
+
 }

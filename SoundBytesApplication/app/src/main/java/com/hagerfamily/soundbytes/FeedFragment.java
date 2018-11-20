@@ -85,11 +85,9 @@ public class FeedFragment extends Fragment {
     }
 
     private JSONArray getUserFeed() throws JSONException {
-        return new JSONArray().put(new JSONObject().put("t", "Test 123!").put("b", "Hello There! This is a test post with a test body paragraph."));
-//        JSONObject json = new JSONObject();
-//        json.put("username", loginManager.loginSp.getString("Username", ""));
-//        json.put("id", loginManager.clientTokensSp.getString("AccessToken", ""));
-//        return requester.JSONRequest(json, "https://faidg1ey0l.execute-api.us-west-2.amazonaws.com/prod/get-bites").getJSONArray("all_posts");
+        JSONObject headers = new JSONObject();
+        headers.put("Authorization", "Token "+loginManager.clientTokensSp.getString("AccessToken", "null"));
+        return requester.GetRequest(headers, "https://faidg1ey0l.execute-api.us-west-2.amazonaws.com/prod/get-bites").getJSONArray("all_posts");
         // TODO: make raise error if times out.
     }
 
