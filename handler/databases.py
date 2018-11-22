@@ -1,8 +1,8 @@
 class Databases:
     def __init__(self):
         # import anything that might be needed.
-        global boto3
-        import boto3
+        global boto3, json
+        import boto3, json
         # set all the default class variables to None
         self.dynamo_db = None
         self.dynamo_table = None
@@ -54,7 +54,6 @@ class Databases:
         return True
 
     def create_response(self, body, code):
-        self._import("respond")
         # this will create an html readable response with a code.
         return {
             "statusCode": code,
