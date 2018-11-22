@@ -48,6 +48,8 @@ class CreateAccount:
             password_hash = base64.b64encode(hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest())
             user = {"Username": data["username"], "Password": password_hash.decode("utf-8"), "Email": data["email"], "Verified": False, "Intrests": DEFAULT_INTRESTS}
             self.database.users.put_item(Item = user)
+            # finally send an email to the user so they can verify it.
+            ## TODO: add code for sending email
             body = {
                 "cod": 101
             }
