@@ -284,9 +284,9 @@ class App:
             print("username not found. data was " +  data["username"])
             return self.create_response(body, 400)
         print(data["password"])
-        password_hash = hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest()
+        password_hash = base64.b64encode(hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest())
         print(password_hash)
-        if password_hash != base64.b64decode(user["Password"]):
+        if password_hash != user["Password"]:
             body = {
                 "err": "Password does not match for user.",
                 "cod": 4
@@ -347,8 +347,8 @@ class App:
                     "cod": 10
                 }
                 return self.create_response(body, 400)
-            password_hash = hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest()
-            user = {"Username": data["username"], "Password": base64.b64encode(password_hash).decode("utf-8"), "Email": data["email"], "Verified": False, "Intrests": DEFAULT_INTRESTS}
+            password_hash = base64.b64encode(hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest())
+            user = {"Username": data["username"], "Password": password_hash.decode("utf-8"), "Email": data["email"], "Verified": False, "Intrests": DEFAULT_INTRESTS}
             self.users.put_item(Item = user)
             body = {
                 "cod": 101

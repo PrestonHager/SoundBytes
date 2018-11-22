@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,14 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.hagerfamily.soundbytes.dummy.DummyContent;
-import com.hagerfamily.soundbytes.dummy.DummyContent.DummyItem;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -28,7 +22,7 @@ public class FeedFragment extends Fragment {
 
     private Context context;
     private LoginManager loginManager;
-    private ServerRequester requester = new ServerRequester();
+    private ServerRequester requester;
     private FeedAdapter userFeedAdapter;
     private SwipeRefreshLayout userFeedRefreshLayout;
     private String urlGetBites;
@@ -83,7 +77,7 @@ public class FeedFragment extends Fragment {
             userFeedRefreshLayout.setRefreshing(false);
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(context, R.string.errorFeedUpdate, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.error_feed_update, Toast.LENGTH_LONG).show();
             userFeedRefreshLayout.setRefreshing(false);
         }
     }
@@ -99,5 +93,6 @@ public class FeedFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        requester = new ServerRequester(context);
     }
 }

@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 public class SplashPage extends AppCompatActivity {
 
-    private ServerRequester requester = new ServerRequester();
+    private ServerRequester requester = new ServerRequester(this);
     private String urlAuthorize;
 
     @Override
@@ -30,6 +30,7 @@ public class SplashPage extends AppCompatActivity {
         String password = sp.getString("Password", null);
         // If the user has not logged in before, or is logged out.
         if (username == null || password == null) {
+            Log.i("SplashPage", "No login tokens were found. Moving to login activity.");
             Intent loginIntent = new Intent(this, LoginActivity.class);
             startActivity(loginIntent);
         } else {
@@ -73,7 +74,7 @@ public class SplashPage extends AppCompatActivity {
             return requester.JSONRequest(json, urlAuthorize);
         } catch (Exception e) {
             e.printStackTrace();
-            return new JSONObject();
+            return requester.getNewJSONObjectWithError(R.string.error_unknown);
         }
     }
 }

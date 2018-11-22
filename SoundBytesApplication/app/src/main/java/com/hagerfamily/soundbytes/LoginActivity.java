@@ -8,14 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
     private SharedPreferences clientTokensSp;
     private SharedPreferences loginSp;
-    private ServerRequester requester = new ServerRequester();
+    private ServerRequester requester = new ServerRequester(this);
     private TextView errorTextView;
     private String urlAuthorize;
     private String urlCreateAccount;
@@ -66,13 +65,13 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 String error = loginTokens.getString("err");
                 String code = String.format("%s", loginTokens.getInt("cod"));
-                String errorMsg = R.string.error_default + " (" + code + ") " + error;
+                String errorMsg = getString(R.string.error_default) + " (" + code + ") " + error;
                 errorTextView.setText(errorMsg);
                 errorTextView.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            errorTextView.setText(R.string.error_connection);
+            errorTextView.setText(getString(R.string.error_connection));
             errorTextView.setVisibility(View.VISIBLE);
         }
     }
@@ -101,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 String error = signupRequest.getString("err");
                 String code = String.format("%s", signupRequest.getInt("cod"));
-                String errorMsg = R.string.error_default + " (" + code + ") " + error;
+                String errorMsg = getString(R.string.error_default) + " (" + code + ") " + error;
                 errorTextView.setText(errorMsg);
                 errorTextView.setVisibility(View.VISIBLE);
             }
@@ -119,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
             return requester.JSONRequest(json, urlAuthorize);
         } catch (Exception e) {
             e.printStackTrace();
-            return new JSONObject();
+            return requester.getNewJSONObjectWithError(R.string.error_unknown);
         }
     }
 
@@ -133,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
             return requester.JSONRequest(json, urlCreateAccount);
         } catch (Exception e) {
             e.printStackTrace();
-            return new JSONObject();
+            return requester.getNewJSONObjectWithError(R.string.error_unknown);
         }
     }
 }

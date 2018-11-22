@@ -1,21 +1,19 @@
 package com.hagerfamily.soundbytes;
 
+import android.content.Context;
+import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.net.ssl.HttpsURLConnection;
 
 class ServerRequester {
+    private Context context;
+
     public class Request extends Thread {
         private String url;
         private String method;
@@ -67,7 +65,7 @@ class ServerRequester {
                     input.close();
                     response = responseBuffer.toString();
                 } else {
-                    throw new Exception("Bad Response Code. Returned "+responseCode.toString()+" code, expected 2xx.");
+                      throw new Exception("Bad Response Code. Returned "+responseCode.toString()+" code, expected 2xx.");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -102,6 +100,19 @@ class ServerRequester {
         }
     }
 
+    ServerRequester(Context context) {
+        this.context = context;
+    }
+
+    JSONObject getNewJSONObjectWithError(Integer error) {
+        try {
+            return new JSONObject().put("cod", -1).put("err", context.getString(error));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new JSONObject();
+        }
+    }
+
     JSONObject GetRequest(JSONObject headers, String url) {
         try {
             Request request = new Request(url, "GET", "text/plain", "application/json", headers);
@@ -110,11 +121,11 @@ class ServerRequester {
             if (request.getResponseCode() >= 200 && request.getResponseCode() < 300) {
                 return new JSONObject(response);
             } else {
-                return new JSONObject();
+                return getNewJSONObjectWithError(R.string.error_unknown);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new JSONObject();
+            return getNewJSONObjectWithError(R.string.error_unknown);
         }
     }
 
@@ -129,11 +140,11 @@ class ServerRequester {
                 return new JSONObject(response);
             }
             else {
-                return new JSONObject();
+                return getNewJSONObjectWithError(R.string.error_unknown);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new JSONObject();
+            return getNewJSONObjectWithError(R.string.error_unknown);
         }
     }
 }

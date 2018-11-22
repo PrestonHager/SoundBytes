@@ -26,9 +26,10 @@
     <string name="error_default">Error</string>
     <string name="error_connection">Error: you may not have a strong internet connection.</string>
     <string name="error_password_match">Error: the passwords do not match.</string>
+    <string name="error_unknown">Unknown error has occurred. Possibly connection.</string>
 
     <!-- Strings related to feed page -->
-    <string name="errorFeedUpdate">Unable to update feed.</string>
+    <string name="error_feed_update">Unable to update feed.</string>
     <string name="post_title">Post Title</string>
     <string name="post_body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eleifend lorem felis, a consectetur dui ullamcorper nec. Cras sagittis vitae nibh et dapibus. Praesent lorem eros, maximus nec leo tempus, egestas dictum felis. Nulla vehicula.</string>
     <string name="logout_button_text">Logout</string>
