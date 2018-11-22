@@ -39,8 +39,8 @@ provider:
       Resource: arn:aws:dynamodb:*:*:table/sound-bytes-users
 
 # you can define service wide environment variables here
-environment:
-  stage: ${opt:stage, 'dev'}
+# environment:
+#   stage: ${opt:stage, 'dev'}
 
 # you can add packaging information here
 # package:
