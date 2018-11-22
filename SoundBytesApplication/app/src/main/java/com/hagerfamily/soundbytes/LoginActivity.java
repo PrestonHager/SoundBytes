@@ -17,11 +17,17 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences loginSp;
     private ServerRequester requester = new ServerRequester();
     private TextView errorTextView;
+    private String urlAuthorize;
+    private String urlCreateAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // set url variables.
+        urlAuthorize = getString(R.string.url_auth);
+        urlCreateAccount = getString(R.string.url_create_account);
 
         clientTokensSp = getSharedPreferences("ClientTokens", MODE_PRIVATE);
         loginSp = getSharedPreferences("Login", MODE_PRIVATE);
@@ -32,8 +38,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // do nothing when the back button is pressed.
-        // TODO: exit the app.
+        // exit the app when the back button is pressed.
+        finish();
     }
 
     public void onLoginButtonPressed(View v) {
@@ -110,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
             json.put("username", username);
             json.put("password", password);
 
-            return requester.JSONRequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/dev/auth");
+            return requester.JSONRequest(json, urlAuthorize);
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();
@@ -124,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
             json.put("password", password);
             json.put("email", email);
 
-            return requester.JSONRequest(json, "https://nj0okdeivk.execute-api.us-west-2.amazonaws.com/dev/create-account");
+            return requester.JSONRequest(json, urlCreateAccount);
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();

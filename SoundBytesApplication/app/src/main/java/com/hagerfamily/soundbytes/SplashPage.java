@@ -11,11 +11,15 @@ import org.json.JSONObject;
 public class SplashPage extends AppCompatActivity {
 
     private ServerRequester requester = new ServerRequester();
+    private String urlAuthorize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_page);
+
+        // set url variables, this just saves on processing time.
+        urlAuthorize = getString(R.string.url_auth);
 
         // Get the SharedPreferences instance for login data.
         SharedPreferences sp = getSharedPreferences("Login", MODE_PRIVATE);
@@ -66,7 +70,7 @@ public class SplashPage extends AppCompatActivity {
             json.put("username", username);
             json.put("password", password);
 
-            return requester.JSONRequest(json, "https://faidg1ey0l.execute-api.us-west-2.amazonaws.com/prod/auth");
+            return requester.JSONRequest(json, urlAuthorize);
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();

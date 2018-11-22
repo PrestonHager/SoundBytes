@@ -31,12 +31,16 @@ public class FeedFragment extends Fragment {
     private ServerRequester requester = new ServerRequester();
     private FeedAdapter userFeedAdapter;
     private SwipeRefreshLayout userFeedRefreshLayout;
+    private String urlGetBites;
 
     public FeedFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // set url variable.
+        urlGetBites = getString(R.string.url_get_bites);
     }
 
     @Override
@@ -87,7 +91,7 @@ public class FeedFragment extends Fragment {
     private JSONArray getUserFeed() throws JSONException {
         JSONObject headers = new JSONObject();
         headers.put("Authorization", "Token "+loginManager.clientTokensSp.getString("AccessToken", "null"));
-        return requester.GetRequest(headers, "https://faidg1ey0l.execute-api.us-west-2.amazonaws.com/prod/get-bites").getJSONArray("all_posts");
+        return requester.GetRequest(headers, urlGetBites).getJSONArray("all_posts");
         // TODO: make raise error if times out.
     }
 

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    tools:ignore="autoFill">
 
     <TextView
         android:id="@+id/usernameTextView"
@@ -49,7 +50,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:autofillHints=""
         android:ems="10"
         android:hint="@string/password_entry"
         android:inputType="textPassword"
@@ -67,7 +67,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:autofillHints=""
         android:ems="10"
         android:hint="@string/username_entry"
         android:inputType="text"
@@ -147,12 +146,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:autofillHints=""
         android:ems="10"
         android:hint="@string/username_entry"
         android:inputType="text"
         android:nextFocusUp="@id/usernameEntrySignup"
         android:nextFocusDown="@id/passwordEntrySignup"
+        android:text="ph_314"
         app:layout_constraintBottom_toBottomOf="@+id/usernameTextViewSignup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/usernameTextViewSignup"
@@ -162,19 +161,19 @@
         android:id="@+id/passwordEntrySignup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/password_entry"
         android:inputType="textPassword"
-        android:nextFocusDown="@id/passwordEntryVerifySignup"
         android:nextFocusUp="@id/usernameEntrySignup"
+        android:nextFocusDown="@id/passwordEntryVerifySignup"
+        android:text="test123"
         app:layout_constraintBottom_toBottomOf="@+id/passwordTextViewSignup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/passwordTextViewSignup"
-        app:layout_constraintTop_toTopOf="@+id/passwordTextViewSignup"
-        android:autofillHints="" />
+        app:layout_constraintTop_toTopOf="@+id/passwordTextViewSignup" />
 
     <EditText
         android:id="@+id/passwordEntryVerifySignup"
@@ -186,6 +185,7 @@
         android:inputType="textPassword"
         android:nextFocusUp="@id/passwordEntrySignup"
         android:nextFocusDown="@id/emailEntrySignup"
+        android:text="test123"
         app:layout_constraintEnd_toEndOf="@+id/passwordEntrySignup"
         app:layout_constraintStart_toStartOf="@+id/passwordEntrySignup"
         app:layout_constraintTop_toBottomOf="@+id/passwordEntrySignup" />
@@ -200,6 +200,7 @@
         android:inputType="textEmailAddress"
         android:nextFocusUp="@id/passwordEntryVerifySignup"
         android:nextFocusDown="@id/signupButton"
+        android:text="preston@hagerfamily.com"
         app:layout_constraintBottom_toBottomOf="@+id/emailTextView"
         app:layout_constraintEnd_toEndOf="@+id/passwordEntryVerifySignup"
         app:layout_constraintStart_toStartOf="@+id/passwordEntryVerifySignup"
