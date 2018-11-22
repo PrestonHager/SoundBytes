@@ -43,58 +43,51 @@ environment:
   stage: ${opt:stage, 'dev'}
 
 # you can add packaging information here
-package:
-  exclude:
-    - LICENSE
-    - CONTRIBUTORS.md
-    - SoundsBytesApplication/**
-    - test.mp3
-    - test.mp3.base64
-  include:
-    - handler.py
-    - six.py
-    - argon2/**
-    - cffi/**
-    - pycparser/**
-    - tinytag/**
+# package:
+#   exclude:
+#     - file
+#     - dir/**
+#   include:
+#     - file
+#     - dir/**
 
 functions:
-  upload-bite:
-    handler: handler.upload_bite
-    events:
-      - http:
-          path: upload-bite
-          method: post
-  login:
-    handler: handler.login
+  auth:
+    handler: auth.run
     events:
       - http:
           path: auth
           method: post
   create-account:
-    handler: handler.create_account
+    handler: create_account.run
     events:
       - http:
           path: create-account
           method: post
-  refresh-token:
-    handler: handler.refresh_client
-    events:
-      - http:
-          path: refresh-token
-          method: post
-  verify-email:
-    handler: handler.verify_email
-    events:
-      - http:
-          path: verify
-          method: post
   get-bites:
-    handler: handler.get_bites
+    handler: get_bites.run
     events:
       - http:
           path: get-bites
           method: get
+  refresh-client:
+    handler: refresh_client.run
+    events:
+      - http:
+          path: refresh-client
+          method: post
+  upload-bite:
+    handler: upload_bite.run
+    events:
+      - http:
+          path: upload-bite
+          method: post
+  verify-email:
+    handler: verify_email.run
+    events:
+      - http:
+          path: verify
+          method: post
 
 # you can add CloudFormation resource templates here
 resources:
