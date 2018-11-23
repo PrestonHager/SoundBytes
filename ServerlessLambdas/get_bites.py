@@ -21,7 +21,9 @@ class GetBites:
                 "cod": 13
             }
             return self.database.create_response(body, 403)
-        token = event["headers"]["Authorization"].strip("Token ")
+        print(event)
+        token = event["queryParameters"]
+        # token = event["headers"]["Authorization"].strip("Basic ")
         try:
             client_item = self.database.auth_table.get_item(Key = {"ClientId": token})["Item"]
         except:

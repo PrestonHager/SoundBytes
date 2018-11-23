@@ -14,7 +14,8 @@ class RefreshClient:
     """
     def refresh_client(self, event, context):
         self.database.init_auth_db()
-        token = event["headers"]["Authorization"]
+        # token = queryParams ["tkn"]
+        # token = event["body"]
         try:
             client_item = self.database.auth_table.get_item(Key = {"ClientId": token})["Item"]
         except:

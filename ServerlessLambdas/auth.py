@@ -25,7 +25,7 @@ class Auth:
             print("username not found. data was " +  data["username"])
             return self.database.create_response(body, 400)
         print(data["password"])
-        password_hash = base64.b64encode(hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest())
+        password_hash = base64.b64encode(hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest()).decode("utf-8")
         print(password_hash)
         if password_hash != user["Password"]:
             body = {
@@ -49,10 +49,10 @@ class Auth:
             "id": access_token, # used to request resources or attach to uploaded resources.
             "rt": refresh_token, # the refresh token is used to get a new access token.
             "iat": current_time, # the issued at time is the current time.
-            "exp": 3600, # the access token is valid for 1 hour.
+            "exp": current_time + 3600, # the access token is valid for 1 hour.
             "cod": 100, # the code is a success.
         }
-        response = self.database.create_response(body, 200)
+        response = self.database.create_response(body, 201)
         return response
 
 def run(e, c):

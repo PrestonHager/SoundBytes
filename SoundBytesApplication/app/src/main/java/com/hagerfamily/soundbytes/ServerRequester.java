@@ -8,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.Buffer;
 import java.util.Iterator;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -53,20 +54,20 @@ class ServerRequester {
                 }
 
                 responseCode = request.getResponseCode();
+                BufferedReader input;
                 if (responseCode >= 200 && responseCode < 300) {
-                    BufferedReader input = new BufferedReader(
-                            new InputStreamReader(request.getInputStream()));
-                    String inputLine;
-                    StringBuilder responseBuffer = new StringBuilder();
-
-                    while ((inputLine = input.readLine()) != null) {
-                        responseBuffer.append(inputLine);
-                    }
-                    input.close();
-                    response = responseBuffer.toString();
+                    input = new BufferedReader(new InputStreamReader(request.getInputStream()));
                 } else {
-                      throw new Exception("Bad Response Code. Returned "+responseCode.toString()+" code, expected 2xx.");
+                    input = new BufferedReader(new InputStreamReader(request.getErrorStream()));
                 }
+                String inputLine;
+                StringBuilder responseBuffer = new StringBuilder();
+
+                while ((inputLine = input.readLine()) != null) {
+                    responseBuffer.append(inputLine);
+                }
+                input.close();
+                response = responseBuffer.toString();
             } catch (Exception e) {
                 e.printStackTrace();
             }

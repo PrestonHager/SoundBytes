@@ -61,12 +61,13 @@ class Databases:
         }
 
     def generate_client_id(self, user, refresh_token, current_time):
-        all_ids = self.database.auth_table.get_item(Key = {"ClientId": "-1"})["Item"]["AllIds"]
+        import random
+        all_ids = self.auth_table.get_item(Key = {"ClientId": "-1"})["Item"]["AllIds"]
         id = "%032x" % random.randrange(16**32)
         while id in all_ids:
             id = "%032x" % random.randrange(16**32)
         all_ids.append(id)
-        self.database.auth_table.update_item(Key = {"ClientId": "-1"}, AttributeUpdates = {"AllIds": {"Value": all_ids}})
+        self.auth_table.update_item(Key = {"ClientId": "-1"}, AttributeUpdates = {"AllIds": {"Value": all_ids}})
         client_item = {"ClientId": id, "RefreshToken": refresh_token, "IssueTime": current_time, "Expires": current_time+3600, "User": user}
-        self.database.auth_table.put_item(Item = client_item)
+        self.auth_table.put_item(Item = client_item)
         return id
