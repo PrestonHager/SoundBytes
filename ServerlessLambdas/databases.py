@@ -20,21 +20,21 @@ class Databases:
     def init_dynamodb(self):
         self._init_dynamodb()
         # correct resources.
-        self.dynamo_table = self.dynamo_db.Table("sound-bytes-bites-metadata")
+        self.dynamo_table = self.dynamo_db.Table("soundbytes-bites-metadata")
         # return True from the process.
         return True
 
     def init_auth_db(self):
         self._init_dynamodb()
         # set to point at auth table.
-        self.auth_table = self.dynamo_db.Table("sound-bytes-auth")
+        self.auth_table = self.dynamo_db.Table("soundbytes-auth")
         # return True from the process
         return True
 
     def init_users(self):
         self._init_dynamodb()
         # set to the user dynamodb table.
-        self.users = self.dynamo_db.Table("sound-bytes-users")
+        self.users = self.dynamo_db.Table("soundbytes-users")
         # return True from the proccess
         return True
 
@@ -47,7 +47,7 @@ class Databases:
     def upload_s3(self, file_stream, key):
         # upload a file obj/stream to the s3 bucket.
         try:
-            self.s3_connection.upload_fileobj(file_stream, "sound-bytes-bites", key)
+            self.s3_connection.upload_fileobj(file_stream, "soundbytes-bites", key)
         except Exception as err:
             return err
         # return True from the process.

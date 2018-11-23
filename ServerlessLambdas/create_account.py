@@ -56,5 +56,4 @@ class CreateAccount:
             return self.database.create_response(body, 201)
 
 def run(e, c):
-    print("Invoked")
     return CreateAccount().create_account(e, c)
