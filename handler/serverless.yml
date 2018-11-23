@@ -6,7 +6,7 @@ service: sound-bytes
 
 provider:
   name: aws
-  runtime: python3.7
+  runtime: python3.6
 
 # you can overwrite defaults here
   stage: ${opt:stage, 'dev'}
