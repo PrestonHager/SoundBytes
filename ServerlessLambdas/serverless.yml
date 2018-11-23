@@ -39,19 +39,25 @@ provider:
       Resource: arn:aws:dynamodb:*:*:table/sound-bytes-users
 
 # you can define service wide environment variables here
-# environment:
-#   stage: ${opt:stage, 'dev'}
+#  environment:
+#    variable1: value1
 
 # you can add packaging information here
-# package:
-#   exclude:
-#     - file
-#     - dir/**
-#   include:
-#     - file
-#     - dir/**
+#package:
+#  include:
+#    - include-me.py
+#    - include-me-dir/**
+#  exclude:
+#    - exclude-me.py
+#    - exclude-me-dir/**
 
 functions:
+  get-bites:
+    handler: get_bites.run
+    events:
+      - http:
+          path: get-bites
+          method: get
   auth:
     handler: auth.run
     events:
@@ -64,12 +70,7 @@ functions:
       - http:
           path: create-account
           method: post
-  get-bites:
-    handler: get_bites.run
-    events:
-      - http:
-          path: get-bites
-          method: get
+
   refresh-client:
     handler: refresh_client.run
     events:
@@ -88,6 +89,10 @@ functions:
       - http:
           path: verify
           method: post
+
+#    Define function environment variables here
+#    environment:
+#      variable2: value2
 
 # you can add CloudFormation resource templates here
 resources:
