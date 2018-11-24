@@ -21,14 +21,28 @@ class ServerRequester {
         private String contentType;
         private String acceptType;
         private String data;
-        private JSONObject headers = new JSONObject();
+        private JSONObject params = new JSONObject();
         private Integer responseCode;
         private String response;
         private Boolean sendData;
 
         public void run() {
             try {
-                URL urlConnection = new URL(url);
+                URL urlConnection;
+                if (params.length() > 0) {
+                    StringBuilder paramsString = new StringBuilder().append("?");
+                    Iterator<String> keys = params.keys();
+                    while (keys.hasNext()) {
+                        String key = keys.next();
+                        if (paramsString.length() != 1) {
+                            paramsString.append("&");
+                        }
+                        paramsString.append(key).append("=").append(params.getString(key));
+                    }
+                    urlConnection = new URL(url+paramsString.toString());
+                } else {
+                    urlConnection = new URL(url);
+                }
                 HttpsURLConnection request = (HttpsURLConnection) urlConnection.openConnection();
 
                 request.setRequestMethod(method);
@@ -36,12 +50,6 @@ class ServerRequester {
                 request.setRequestProperty("Content-Type", contentType);
                 request.setRequestProperty("User-Agent", "Mozilla/5.0 (Android; Linux x86_64; compatible)");
                 request.setRequestProperty("Accept", acceptType);
-
-                Iterator<String> keys = headers.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    request.setRequestProperty(key, headers.getString(key));
-                }
 
                 if (sendData) {
                     OutputStream os = request.getOutputStream();
@@ -73,12 +81,12 @@ class ServerRequester {
             }
         }
 
-        Request(String url, String method, String contentType, String acceptType, JSONObject headers) {
+        Request(String url, String method, String contentType, String acceptType, JSONObject params) {
             this.url = url;
             this.method = method;
             this.contentType = contentType;
             this.acceptType = acceptType;
-            this.headers = headers;
+            this.params = params;
             this.sendData = false;
             start();
         }
@@ -114,9 +122,9 @@ class ServerRequester {
         }
     }
 
-    JSONObject GetRequest(JSONObject headers, String url) {
+    JSONObject GetRequest(JSONObject params, String url) {
         try {
-            Request request = new Request(url, "GET", "text/plain", "application/json", headers);
+            Request request = new Request(url, "GET", "text/plain", "application/json", params);
             request.join();
             String response = request.getResponse();
             if (request.getResponseCode() >= 200 && request.getResponseCode() < 300) {

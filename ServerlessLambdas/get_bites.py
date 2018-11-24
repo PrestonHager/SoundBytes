@@ -13,17 +13,16 @@ class GetBites:
         # initialize the authorization database so we can authenticate the user.
         self.database.init_auth_db()
         # for now just a test post will be put up infinitely.
-        # eventually this will have a user put there token in Authorization header
+        # eventually this will have a user put in a query parameter with their token.
         # then an AI will match posts to them, these post ids will be stored somewhere.
-        if "Authorization" not in event["headers"]:
+        try:
+            token = event["queryStringParameters"]["tkn"]
+        except:
             body = {
-                "err": "No Authorization header found.",
+                "err": "No token found in request.",
                 "cod": 13
             }
-            return self.database.create_response(body, 403)
-        print(event)
-        token = event["queryParameters"]
-        # token = event["headers"]["Authorization"].strip("Basic ")
+            return self.database.create_response(body, 400)
         try:
             client_item = self.database.auth_table.get_item(Key = {"ClientId": token})["Item"]
         except:
@@ -39,4 +38,4 @@ class GetBites:
         return self.database.create_response(body, 200)
 
 def run(e, c):
-    return CreateAccount().create_account(e, c)
+    return GetBites().get_bites(e, c)
