@@ -37,6 +37,17 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
       Resource: arn:aws:dynamodb:*:*:table/soundbytes-users
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:*:*:table/soundbytes-verify
+    - Effect: Allow
+      Action:
+        - ses:SendEmail
+      Resource: arn:aws:ses:*:*:identity/*
 
 # you can define service wide environment variables here
 #  environment:
@@ -88,7 +99,7 @@ functions:
     events:
       - http:
           path: verify
-          method: post
+          method: get
 
 #    Define function environment variables here
 #    environment:
@@ -137,6 +148,19 @@ resources:
        KeySchema:
           - AttributeName: Username
             KeyType: HASH
+       ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+   DynamoDBTableVerify:
+     Type: AWS::DynamoDB::Table
+     Properties:
+       TableName: soundbytes-verify
+       AttributeDefinitions:
+         - AttributeName: LinkId
+           AttributeType: S
+       KeySchema:
+         - AttributeName: LinkId
+           KeyType: HASH
        ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5

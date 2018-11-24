@@ -8,6 +8,7 @@ class Databases:
         self.dynamo_table = None
         self.auth_table = None
         self.users = None
+        self.verify_table = None
         self.s3_connection = None
         self.s3_bucket = None
 
@@ -38,6 +39,13 @@ class Databases:
         # return True from the proccess
         return True
 
+    def init_verify_table(self):
+        self._init_dynamodb()
+        # set to the verify dynamodb table.
+        self.verify_table = self.dynamo_db.Table("soundbytes-verify")
+        # return True from the proccess
+        return True
+
     def init_s3(self):
         # set the s3_connection to a client connection to s3 using boto3.
         self.s3_connection = boto3.client('s3')
@@ -59,6 +67,17 @@ class Databases:
             "statusCode": code,
             "body": json.dumps(body)
         }
+
+    def create_verify_link(self, username):
+        import random
+        all_links = self.verify_table.get_item(Key = {"LinkId": "-1"})["Item"]["AllLinks"]
+        verify_link = "%016x" % random.randrange(16**16)
+        while verify_link in all_links:
+            verify_link = "%016x" % random.randrange(16**16)
+        all_links.append(verify_link)
+        self.verify_table.update_item(Key = {"LinkId": "-1"}, AttributeUpdates = {"AllLinks": {"Value": all_links}})
+        self.verify_table.put_item(Item = {"LinkId": verify_link, "User": username})
+        return "https://9tr6xceawd.execute-api.us-west-2.amazonaws.com/dev/verify?usr=" + verify_link
 
     def generate_client_id(self, user, refresh_token, current_time):
         import random
