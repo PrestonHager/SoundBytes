@@ -17,6 +17,7 @@ Items in *italics* are planned.
   - **Test audio file length to make sure it's between 3 and 120 seconds.**
   - **Get an audio file uplaod from a client.**
   - **Create a user database, and logins for them.**
+  - User database verification and security.
   - *Make "captions" or computer generated text for each audio file.*
   - *Use the "captions" from each audio file to select preferred audio files for users.*
 * *Application*

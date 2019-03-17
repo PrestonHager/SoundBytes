@@ -48,8 +48,8 @@ class ServerRequester {
                 request.setRequestMethod(method);
                 request.setDoOutput(true);
                 request.setRequestProperty("Content-Type", contentType);
-                request.setRequestProperty("User-Agent", "Mozilla/5.0 (Android; Linux x86_64; compatible)");
                 request.setRequestProperty("Accept", acceptType);
+                request.setRequestProperty("Authorization", "");
 
                 if (sendData) {
                     OutputStream os = request.getOutputStream();
@@ -101,11 +101,8 @@ class ServerRequester {
             start();
         }
 
-        private String getResponse() {
+        String getResponse() {
             return response;
-        }
-        private Integer getResponseCode() {
-            return responseCode;
         }
     }
 
@@ -127,11 +124,7 @@ class ServerRequester {
             Request request = new Request(url, "GET", "text/plain", "application/json", params);
             request.join();
             String response = request.getResponse();
-            if (request.getResponseCode() >= 200 && request.getResponseCode() < 300) {
-                return new JSONObject(response);
-            } else {
-                return getNewJSONObjectWithError(R.string.error_unknown);
-            }
+            return new JSONObject(response);
         } catch (Exception e) {
             e.printStackTrace();
             return getNewJSONObjectWithError(R.string.error_unknown);
@@ -145,12 +138,7 @@ class ServerRequester {
             Request request = new Request(url, "POST", "application/json", "application/json", jsonString);
             request.join();
             String response = request.getResponse();
-            if (request.getResponseCode() >= 200 && request.getResponseCode() < 300) {
-                return new JSONObject(response);
-            }
-            else {
-                return getNewJSONObjectWithError(R.string.error_unknown);
-            }
+            return new JSONObject(response);
         } catch (Exception e) {
             e.printStackTrace();
             return getNewJSONObjectWithError(R.string.error_unknown);

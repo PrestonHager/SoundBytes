@@ -70,23 +70,26 @@ public class FeedFragment extends Fragment {
 
     private void updateUserFeed() {
         // refresh the recycler view, userFeed.
-        Log.i("SoundBytesFeed","Refreshing.");
+        Log.i("SoundBytesFeed","Refreshing feed data.");
+        userFeedAdapter.updatePosts(getUserFeed());
+        userFeedAdapter.notifyDataSetChanged();
+        userFeedRefreshLayout.setRefreshing(false);
+    }
+
+    private JSONArray getUserFeed() {
+        JSONObject params = new JSONObject();
+        try { params.put("tkn", loginManager.clientTokensSp.getString("AccessToken", "null")); } catch (JSONException ignored) {}
+        JSONObject response = requester.GetRequest(params, urlGetBites);
+        Log.i("SoundBytesFeed", "Response was "+response.toString());
+        // TODO: make raise error if times out.
         try {
-            userFeedAdapter.updatePosts(getUserFeed());
-            userFeedAdapter.notifyDataSetChanged();
-            userFeedRefreshLayout.setRefreshing(false);
-        } catch (Exception e) {
+            return response.getJSONArray("all_posts");
+        } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(context, R.string.error_feed_update, Toast.LENGTH_LONG).show();
             userFeedRefreshLayout.setRefreshing(false);
+            return new JSONArray();
         }
-    }
-
-    private JSONArray getUserFeed() throws JSONException {
-        JSONObject params = new JSONObject();
-        params.put("tkn", loginManager.clientTokensSp.getString("AccessToken", "null"));
-        return requester.GetRequest(params, urlGetBites).getJSONArray("all_posts");
-        // TODO: make raise error if times out.
     }
 
     @Override

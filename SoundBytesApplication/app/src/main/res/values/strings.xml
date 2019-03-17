@@ -35,8 +35,6 @@
     <string name="logout_button_text">Logout</string>
 
     <!-- URLS -->
-    <string name="url_dev_base">https://9tr6xceawd.execute-api.us-west-2.amazonaws.com/dev/</string>
-    <string name="url_prod_base">prod</string>
     <string name="url_auth">https://9tr6xceawd.execute-api.us-west-2.amazonaws.com/dev/auth</string>
     <string name="url_create_account">https://9tr6xceawd.execute-api.us-west-2.amazonaws.com/dev/create-account</string>
     <string name="url_get_bites">https://9tr6xceawd.execute-api.us-west-2.amazonaws.com/dev/get-bites</string>

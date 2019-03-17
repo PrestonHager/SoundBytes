@@ -69,6 +69,12 @@ functions:
       - http:
           path: get-bites
           method: get
+  verify-email:
+    handler: verify_email.run
+    events:
+      - http:
+          path: verify
+          method: get
   auth:
     handler: auth.run
     events:
@@ -94,12 +100,6 @@ functions:
       - http:
           path: upload-bite
           method: post
-  verify-email:
-    handler: verify_email.run
-    events:
-      - http:
-          path: verify
-          method: get
 
 #    Define function environment variables here
 #    environment:
