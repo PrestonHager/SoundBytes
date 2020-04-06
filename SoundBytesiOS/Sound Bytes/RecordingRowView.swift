@@ -26,9 +26,11 @@ struct RecordingRowView: View {
     var body: some View {
         HStack {
             if (!showRenaming) {
-                Text(recording.name)
-                    .foregroundColor(.primary)
-                Spacer()
+                Group {
+                    Text(recording.name)
+                        .foregroundColor(.primary)
+                    Spacer()
+                }
                 Image(systemName: recording.playing ? "square.fill" : "play.fill")
                     .imageScale(.large)
                     .padding()

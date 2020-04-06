@@ -127,12 +127,6 @@ class AudioController: NSObject, ObservableObject, AVAudioPlayerDelegate, AVAudi
     }
     
     func fetchRecordings() {
-//        #if DEBUG
-//        recordings = [
-//            Recording(name: "Test Recording", fileURL: URL(fileURLWithPath: "test.m4a"), createdAt: Date()),
-//            Recording(name: "Another Test", fileURL: URL(fileURLWithPath: "another.m4a"), createdAt: Date())
-//        ]
-//        #else
         recordings.removeAll()
         
         // The file stuff.
@@ -149,7 +143,6 @@ class AudioController: NSObject, ObservableObject, AVAudioPlayerDelegate, AVAudi
         // Sort the recordings in order of creation.
         recordings.sort(by: { $0.createdAt.compare($1.createdAt) == .orderedAscending})
         objectWillChange.send(self)
-//        #endif
     }
     
     // TODO: polish

@@ -25,6 +25,7 @@
 		3ACE6D472439A67700C5BE1A /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACE6D462439A67700C5BE1A /* AudioController.swift */; };
 		3AE259B32437036F00F243AE /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE259B22437036F00F243AE /* Extensions.swift */; };
 		3AE259B72437178E00F243AE /* RecordingRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AE259B62437178E00F243AE /* RecordingRowView.swift */; };
+		3AF11128243AE8FC00B920CA /* NewPostDraftView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF11127243AE8FC00B920CA /* NewPostDraftView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		3AE259B22437036F00F243AE /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3AE259B62437178E00F243AE /* RecordingRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingRowView.swift; sourceTree = "<group>"; };
 		3AF11124243A9BFB00B920CA /* Sound Bytes.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Sound Bytes.entitlements"; sourceTree = "<group>"; };
+		3AF11127243AE8FC00B920CA /* NewPostDraftView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostDraftView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 				3A0C9D09231CAE0A001E1157 /* PostPlayingOverlay.swift */,
 				3A4F5BC12314CA25007A5D48 /* SoundBite.swift */,
 				3A4F5BBF2314C9B4007A5D48 /* NewPostView.swift */,
+				3AF11127243AE8FC00B920CA /* NewPostDraftView.swift */,
 				3AE259B62437178E00F243AE /* RecordingRowView.swift */,
 				3ACE6D462439A67700C5BE1A /* AudioController.swift */,
 				3AE259B22437036F00F243AE /* Extensions.swift */,
@@ -310,6 +313,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AF11128243AE8FC00B920CA /* NewPostDraftView.swift in Sources */,
 				3A4F5BBE2314C94E007A5D48 /* ProfileView.swift in Sources */,
 				3AA28ED52314639800F21579 /* AppDelegate.swift in Sources */,
 				3AE259B72437178E00F243AE /* RecordingRowView.swift in Sources */,
