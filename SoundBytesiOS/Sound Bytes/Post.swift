@@ -31,6 +31,8 @@ struct Post: View {
             Button(action: {
                 if (!self.soundbite.playing) {
                     self.soundbite.playing = true
+                } else {
+                    self.soundbite.playing = false
                 }
             }) {
                 // The actual text which is taken from the soundbite
@@ -55,7 +57,7 @@ struct Post: View {
 #if DEBUG
 struct Post_Previews: PreviewProvider {    
     static var previews: some View {
-        Post(soundbite: SoundBite(title: "Post", text: "Post text goes here.", time: Date()))
+        Post(soundbite: SoundBite(title: "Post", text: "Post text goes here.", createdAt: Date()))
     }
 }
 #endif

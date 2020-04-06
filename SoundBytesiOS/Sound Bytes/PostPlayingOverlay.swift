@@ -43,7 +43,7 @@ struct PostPlayingOverlay: View {
 }
 
 struct PostPlayingOverlay_Previews: PreviewProvider {
-    @State static var debugSoundBite: SoundBite = SoundBite(playing: true, title: "Post", text: "Post text goes here.", time: Date())
+    @State static var debugSoundBite: SoundBite = SoundBite(playing: true, title: "Post", text: "Post text goes here.", createdAt: Date())
     
     static var previews: some View {
         PostPlayingOverlay(soundbite: $debugSoundBite)

@@ -9,7 +9,10 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var audioController: AudioController
+
     @State var posts: [SoundBite] = []
+    @State private var selectedPost = 0
     
     var body: some View {
         NavigationView {
@@ -31,7 +34,7 @@ struct ContentView: View {
                     .foregroundColor(.blue)
                 }, trailing:
                 // add a trailing item (on the right) for adding a new post
-                NavigationLink(destination: NewPostView()) {
+                NavigationLink(destination: NewPostView(posts: $posts, audioController: audioController)) {
                     Image(systemName: "plus")
                         .resizable()
                         .frame(width: 24.0, height: 24.0)
@@ -52,13 +55,13 @@ struct ContentView: View {
 #if DEBUG
 struct ContentView_Previews: PreviewProvider {
     static let debugPosts = [
-        SoundBite(title: "Test 1", text: "This is the first test post in a list of posts for soundbytes.", time: Date()),
-        SoundBite(playing: true, title: "Test 2", text: "And this is the second post. Click the post to play.", time: Date()),
-        SoundBite(title: "My First Post", text: "I'm still just testing.", time: Date())
+        SoundBite(title: "Test 1", text: "This is the first test post in a list of posts for soundbytes.", createdAt: Date()),
+        SoundBite(playing: true, title: "Test 2", text: "And this is the second post. Click the post to play.", createdAt: Date()),
+        SoundBite(title: "My First Post", text: "I'm still just testing.", createdAt: Date())
     ]
     
     static var previews: some View {
-        ContentView(posts: debugPosts)
+        ContentView(audioController: AudioController(), posts: debugPosts)
     }
 }
 #endif

@@ -13,7 +13,6 @@ struct SoundBite : Hashable, Codable, Identifiable {
     var playing: Bool = false
     var title: String
     var text: String
-    // Note: don't have Void in structs, it cuauses memory problems
-    // var audio = Void.self
-    var time: Date
+//    let fileURL: URL
+    let createdAt: Date
 }
