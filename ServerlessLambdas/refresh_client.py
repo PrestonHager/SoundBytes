@@ -14,8 +14,14 @@ class RefreshClient:
     """
     def refresh_client(self, event, context):
         self.database.init_auth_db()
-        # token = queryParams ["tkn"]
-        # token = event["body"]
+        try:
+            token = event["queryStringParameters"]["tkn"]
+        except:
+            body = {
+                "err": "No token found in request.",
+                "cod": 13
+            }
+            return self.database.create_response(body, 400)
         try:
             client_item = self.database.auth_table.get_item(Key = {"ClientId": token})["Item"]
         except:
@@ -46,10 +52,10 @@ class RefreshClient:
         refresh_token = "%032x" % random.randrange(16**32)
         access_token = self.database.generate_client_id(client_item["User"], refresh_token, current_time)
         body = {
-            "id": access_token, # used to request resources or attach to uploaded resources.
+            "tkn": access_token, # used to request resources or attach to uploaded resources.
             "rt": refresh_token, # the refresh token is used to get a new access token.
             "iat": current_time, # the issued at time is the current time.
-            "exp": 3600, # the access token is valid for 1 hour.
+            "exp": current_time + 3600, # the access token is valid for 1 hour.
             "cod": 100 # the code is a success.
         }
         response = self.database.create_response(body, 200)

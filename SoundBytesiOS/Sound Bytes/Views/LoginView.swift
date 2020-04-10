@@ -11,19 +11,44 @@ import SwiftUI
 struct LoginView: View {
     let networkManager = NetworkManager()
     
+    @State var username: String = "TestUser"
+    @State var password: String = "Password#1"
+    
     var body: some View {
-        Text("Login")
+        VStack {
+            TextField("Username", text: $username)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+            TextField("Password", text: $password)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+            Button(action: loginAction) {
+                Text("Login")
+                    .padding()
+            }
+        }
     }
     
     func loginAction() {
-        let url = ProcessInfo.processInfo.environment["LAMDA_ENDPOINT"]! + "create-account"
+        let url = ProcessInfo.processInfo.environment["LAMBDA_ENDPOINT"]! + "auth"
         let json = [
-            "username": "TestUser",
-            "passowrd": "Password#1",
-            "email": "email@example.com"
+            "username": username,
+            "password": password
         ]
         let data = try! JSONSerialization.data(withJSONObject: json, options: [])
-        networkManager.post(url: url, data: data)
+        networkManager.post(url: url, data: data) {response in
+            if (response.error != nil) {
+                print("Error: " + response.error)
+            } else {
+                print(response)
+                // TODO: move this to the keychain or something more secure.
+                let defaults = UserDefaults.standard
+                defaults.set(response.accessToken, forKey: "AccessToken")
+                defaults.set(response.refreshToken, forKey: "RefreshToken")
+                defaults.set(response.issuedAt, forKey: "TokenIssueTime")
+                defaults.set(response.expiresAt, forKey: "TokenExpirationTime")
+            }
+        }
     }
 }
 

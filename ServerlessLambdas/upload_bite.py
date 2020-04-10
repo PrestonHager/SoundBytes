@@ -93,7 +93,7 @@ class UploadBite:
         self.database.dynamo_table.put_item(Item = biteItem)
         body = {
             "cod": 100,
-            "biteId": biteId
+            "bid": biteId
         }
         # return the response with code 201 (created).
         response = self.database.create_response(body, 201)

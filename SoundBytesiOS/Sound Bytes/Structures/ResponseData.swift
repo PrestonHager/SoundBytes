@@ -9,5 +9,21 @@
 import Foundation
 
 struct ResponseData: Codable {
+    let code: Int
+    let error: String!
     
+    let accessToken: String!
+    let refreshToken: String!
+    let issuedAt: Int!
+    let expiresAt: Int!
+    
+    private enum CodingKeys: String, CodingKey {
+        case code = "cod"
+        case error = "err"
+        
+        case accessToken = "tkn"
+        case refreshToken = "rt"
+        case issuedAt = "iat"
+        case expiresAt = "exp"
+    }
 }

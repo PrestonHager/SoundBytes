@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../Podfile">
+   </FileRef>
+   <FileRef
       location = "self:Sound Bytes.xcodeproj">
    </FileRef>
 </Workspace>

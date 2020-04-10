@@ -15,15 +15,25 @@ Items in *italics* are planned.
   - **Upload an audio file to AWS S3.**
   - **Upload audio file metadata to AWS DynamoDB.**
   - **Test audio file length to make sure it's between 3 and 120 seconds.**
-  - **Get an audio file uplaod from a client.**
+  - **Get an audio file upload from a client.**
   - **Create a user database, and logins for them.**
-  - User database verification and security.
+  - **User database verification and security**.
   - *Make "captions" or computer generated text for each audio file.*
   - *Use the "captions" from each audio file to select preferred audio files for users.*
-* *Application*
+  - *User's can get a list of Sound Bites for their specific interests.*
+* iOS Application
+  - Login page.
+  - Icons and graphics
+  - List of Sound Bites
+  - Playable Sound Bites and UX with posts.
+  - Record from device to create drafts.
+  - Make drafts into posts and publish to server.
+  - Automatic authorization refreshing.
+  -
+* *Android Application*
   - *Create landing page and icons.*
   - *Create login page for user.*
-  - *Store login credentials in phone for a smother user exprience.*
+  - *Store login credentials in phone for a smother user experience.*
   - *Design basic user interface of "list" of sound bites, and a recording button.*
   - *Record audio from the phone and send it to the AWS Lambda.*
   - *Get recording audio clips based on the user from the AWS Lambda.*

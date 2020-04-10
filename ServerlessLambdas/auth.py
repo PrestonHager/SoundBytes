@@ -46,7 +46,7 @@ class Auth:
         refresh_token = "%032x" % random.randrange(16**32)
         access_token = self.database.generate_client_id(user["Username"], refresh_token, current_time)
         body = {
-            "id": access_token, # used to request resources or attach to uploaded resources.
+            "tkn": access_token, # used to request resources or attach to uploaded resources.
             "rt": refresh_token, # the refresh token is used to get a new access token.
             "iat": current_time, # the issued at time is the current time.
             "exp": current_time + 3600, # the access token is valid for 1 hour.
