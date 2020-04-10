@@ -23,13 +23,13 @@ Items in *italics* are planned.
   - *User's can get a list of Sound Bites for their specific interests.*
 * iOS Application
   - Login page.
-  - Icons and graphics
-  - List of Sound Bites
-  - Playable Sound Bites and UX with posts.
-  - Record from device to create drafts.
-  - Make drafts into posts and publish to server.
+  - Icons and graphics.
+  - **List of Sound Bites.**
+  - **Playable Sound Bites and UX with posts.**
+  - **Record from device to create drafts.**
+  - *Make drafts into posts and publish to server.*
   - Automatic authorization refreshing.
-  -
+  - *Offline drafting and data saving for applicable cases.*
 * *Android Application*
   - *Create landing page and icons.*
   - *Create login page for user.*
@@ -76,7 +76,8 @@ The back-end can be found in the `handler` folder.
 * [AWS Lambda](6) - The back-end execution
 * [Serverless](2) - Tool to help with AWS Lambdas
 * [Python](7) - Used to write the AWS Lambda
-* [Android Studio](1) - Used to create the Application
+* [Xcode and SwiftUI](8) - Used to create the iOS Application
+* [Android Studio](1) - Used to create the Android Application
 
 ## Contributing
 
@@ -102,3 +103,4 @@ This project is licensed under the GNU General Public License v3.0, see the [LIC
 [5]: https://serverless.com/framework/docs/providers/aws/guide/installation/
 [6]: https://aws.amazon.com/lambda/
 [7]: https://www.python.org
+[8]: https://developer.apple.com/xcode
