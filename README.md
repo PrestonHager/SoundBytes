@@ -53,16 +53,16 @@ If you want to experiment with the back-end download this repository and upload 
 
 ##### Front-End
 
-Using Android Studio; first install Android Studio from the [offical website](1).
+Using Android Studio; first install Android Studio from the [offical website][1].
 Then open the Application located in the `SoundBytesApplication` folder.
 This will open the Sound Bytes app, which you may play with as much as you'd like.
 
 ##### Back-End
 
-The back-end uses [Serverless](2) with AWS lambdas.
-First to install Serverless you need [Node.JS](3).
-To install Node.JS, go to their [download page](4), and download the version you want, and follow the install instructions there.
-To install Serverless follow their [instructions here](5), or run the following command.
+The back-end uses [Serverless][2] with AWS lambdas.
+First to install Serverless you need [Node.JS][3].
+To install Node.JS, go to their [download page][4], and download the version you want, and follow the install instructions there.
+To install Serverless follow their [instructions here][5], or run the following command.
 
 ```
 npm install -g serverless
@@ -73,11 +73,11 @@ The back-end can be found in the `handler` folder.
 
 ## Built With
 
-* [AWS Lambda](6) - The back-end execution
-* [Serverless](2) - Tool to help with AWS Lambdas
-* [Python](7) - Used to write the AWS Lambda
-* [Xcode and SwiftUI](8) - Used to create the iOS Application
-* [Android Studio](1) - Used to create the Android Application
+* [AWS Lambda][6] - The back-end execution
+* [Serverless][2] - Tool to help with AWS Lambdas
+* [Python][7] - Used to write the AWS Lambda
+* [Xcode and SwiftUI][8] - Used to create the iOS Application
+* [Android Studio][1] - Used to create the Android Application
 
 ## Contributing
 
