@@ -17,40 +17,40 @@ struct NewPostView: View {
     @State var showRecordingFail = false
     
     var body: some View {
-        NavigationView {
-            VStack {
-                List {
-                    ForEach(audioController.recordings.indices, id: \.self) { index in
+        VStack {
+            List {
+                ForEach(audioController.recordings.indices, id: \.self) { index in
+                    NavigationLink(destination: NewPostDraftView(recording: self.$audioController.recordings[index])) {
                         RecordingRowView(audioController: self.audioController, recording: Binding(
                             get: { return self.audioController.recordings[index] },
                             set: { newValue in return self.audioController.recordings[index] = newValue }
                         ), clearAllRecordings: self.clearAllRecordings)
                     }
-                    .onDelete(perform: self.deleteRecording)
                 }
-                // Record and Stop Button
-                Button(action: {
-                    if (self.audioController.recording) {
+                .onDelete(perform: self.deleteRecording)
+            }
+            // Record and Stop Button
+            Button(action: {
+                if (self.audioController.recording) {
+                    self.audioController.stop()
+                } else {
+                    if (self.audioController.playing) {
                         self.audioController.stop()
-                    } else {
-                        if (self.audioController.playing) {
-                            self.audioController.stop()
-                        }
-                        self.clearAllRecordings()
-                        self.showRecordingFail = !self.audioController.record()
                     }
-                }) {
-                    Image(systemName: self.audioController.recording ? "square.fill" : "mic.fill")
-                        .imageScale(.large)
-                        .padding()
-                        .foregroundColor(audioController.recording ? .red : .primary)
+                    self.clearAllRecordings()
+                    self.showRecordingFail = !self.audioController.record()
                 }
-                .padding()
+            }) {
+                Image(systemName: self.audioController.recording ? "square.fill" : "mic.fill")
+                    .imageScale(.large)
+                    .padding()
+                    .foregroundColor(audioController.recording ? .red : .primary)
             }
-            .navigationBarTitle(Text("Drafts"))
-            .alert(isPresented: $showRecordingFail) {
-                Alert(title: Text("Recording Failed"), message: Text("Sound Bytes failed to record. Maybe the microphone permission isn't turned on."), dismissButton: .default(Text("OK")))
-            }
+            .padding()
+        }
+        .navigationBarTitle(Text("Drafts"))
+        .alert(isPresented: $showRecordingFail) {
+            Alert(title: Text("Recording Failed"), message: Text("Sound Bytes failed to record. Maybe the microphone permission isn't turned on."), dismissButton: .default(Text("OK")))
         }
     }
     

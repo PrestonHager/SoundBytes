@@ -20,11 +20,14 @@ struct NewPostDraftView: View {
             Button(action: {
                 // Post the recording and return to the ContentView page.
                 self.presentationMode.wrappedValue.dismiss()
+                self.presentationMode.wrappedValue.dismiss()
             }) {
                 Text("Post")
                 .font(.title)
+                .padding()
             }
         }
+        .navigationBarTitle(Text("Edit Post"))
     }
 }
 
