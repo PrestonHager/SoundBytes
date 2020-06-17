@@ -18,7 +18,7 @@ struct LoginContentView: View {
                     .font(.system(size: 24))
                     .multilineTextAlignment(.center)
                     .padding()
-                NavigationLink(destination: SignupView()) {
+                NavigationLink(destination: SignupView(window: window!)) {
                     Text("Signup")
                     .font(.system(size: 18))
                     .padding()
