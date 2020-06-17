@@ -19,3 +19,9 @@ extension Date
     }
 
 }
+
+extension Date {
+    func toSeconds() -> Int {
+        return Int(self.timeIntervalSince1970)
+    }
+}

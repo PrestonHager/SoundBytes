@@ -6,54 +6,61 @@
 //  Copyright © 2020 Hager Family. All rights reserved.
 //
 
+import UIKit
 import SwiftUI
 
 struct LoginView: View {
-    let networkManager = NetworkManager()
-    
+    @Environment(\.accountManager) var accountManager: AccountManager
+    @Environment(\.audioController) var audioController: AudioController
+    var window: UIWindow?
+
     @State var username: String = "TestUser"
     @State var password: String = "Password#1"
+    
+    @State var disabled: Bool = false
+    
+    init(window: UIWindow? = nil) {
+        self.window = window
+        _ = accountManager.$userAvailable.sink(receiveValue: self.loginCallback)
+    }
     
     var body: some View {
         VStack {
             TextField("Username", text: $username)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
+                .padding(.horizontal)
             TextField("Password", text: $password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
-            Button(action: loginAction) {
+                .padding(.horizontal)
+            Button(action: {
+                if (!self.disabled) {
+                    // disable the buttons and text boxes temporarily.
+                    self.disabled = true
+                    self.accountManager.login(self.username, self.password)
+                }
+            }) {
                 Text("Login")
                     .padding()
             }
         }
+        .navigationBarTitle("Login")
     }
     
-    func loginAction() {
-        let url = ProcessInfo.processInfo.environment["LAMBDA_ENDPOINT"]! + "auth"
-        let json = [
-            "username": username,
-            "password": password
-        ]
-        let data = try! JSONSerialization.data(withJSONObject: json, options: [])
-        networkManager.post(url: url, data: data) {response in
-            if (response.error != nil) {
-                print("Error: " + response.error)
-            } else {
-                print(response)
-                // TODO: move this to the keychain or something more secure.
-                let defaults = UserDefaults.standard
-                defaults.set(response.accessToken, forKey: "AccessToken")
-                defaults.set(response.refreshToken, forKey: "RefreshToken")
-                defaults.set(response.issuedAt, forKey: "TokenIssueTime")
-                defaults.set(response.expiresAt, forKey: "TokenExpirationTime")
-            }
+    func loginCallback(value: Bool) {
+        print("Callback accessed with the value of \(value)")
+        if (value) {
+            let contentView = MainContentView(window: self.window)
+            self.window!.rootViewController = UIHostingController(rootView: contentView)
+        } else {
+            self.disabled = false
+            // TODO: show error for failure to log in.
         }
+        print("Currently disabled: \(self.disabled)")
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
+        LoginView().environment(\.accountManager, AccountManager(NetworkManager())).environment(\.audioController, AudioController())
     }
 }

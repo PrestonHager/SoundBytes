@@ -9,10 +9,11 @@
 import SwiftUI
 
 struct NewPostView: View {
+    // The audio recorder and player is an observed object.
+    @Environment(\.audioController) var audioController: AudioController
+
     // A binding to the array of SoundBites.
     var posts: Binding<[SoundBite]>
-    // The audio recorder and player is an observed object.
-    @ObservedObject var audioController: AudioController
     
     @State var showRecordingFail = false
     
@@ -20,7 +21,7 @@ struct NewPostView: View {
         VStack {
             List {
                 ForEach(audioController.recordings.indices, id: \.self) { index in
-                    NavigationLink(destination: NewPostDraftView(recording: self.$audioController.recordings[index])) {
+                    NavigationLink(destination: NewPostDraftView(recording: self.audioController.recordings[index])) {
                         RecordingRowView(audioController: self.audioController, recording: Binding(
                             get: { return self.audioController.recordings[index] },
                             set: { newValue in return self.audioController.recordings[index] = newValue }
@@ -48,7 +49,6 @@ struct NewPostView: View {
             }
             .padding()
         }
-        .navigationBarTitle(Text("Drafts"))
         .alert(isPresented: $showRecordingFail) {
             Alert(title: Text("Recording Failed"), message: Text("Sound Bytes failed to record. Maybe the microphone permission isn't turned on."), dismissButton: .default(Text("OK")))
         }
@@ -84,7 +84,8 @@ struct NewPostView_Previews: PreviewProvider {
     @State static var debugPosts: [SoundBite] = []
     
     static var previews: some View {
-        NewPostView(posts: $debugPosts, audioController: AudioController())
+        NewPostView(posts: $debugPosts)
+        .environmentObject(AudioController())
     }
 }
 #endif

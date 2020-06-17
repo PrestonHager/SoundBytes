@@ -8,19 +8,24 @@
 
 import SwiftUI
 
-struct FirstContentView: View {
+struct LoginContentView: View {
+    var window: UIWindow?
+    
     var body: some View {
         NavigationView {
             VStack {
                 Text("Welcome to Sound Bytes!\nAre you new or do you already have an account?")
+                    .font(.system(size: 24))
                     .multilineTextAlignment(.center)
                     .padding()
                 NavigationLink(destination: SignupView()) {
                     Text("Signup")
+                    .font(.system(size: 18))
                     .padding()
                 }
-                NavigationLink(destination: LoginView()) {
+                NavigationLink(destination: LoginView(window: window!)) {
                     Text("Login")
+                    .font(.system(size: 18))
                     .padding()
                 }
             }
@@ -30,8 +35,8 @@ struct FirstContentView: View {
     }
 }
 
-struct FirstContentView_Previews: PreviewProvider {
+struct LoginContentView_Previews: PreviewProvider {
     static var previews: some View {
-        FirstContentView()
+        LoginContentView(window: UIWindow())
     }
 }
