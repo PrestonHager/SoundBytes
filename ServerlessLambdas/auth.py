@@ -24,9 +24,7 @@ class Auth:
             }
             print("username not found. data was " +  data["username"])
             return self.database.create_response(body, 400)
-        print(data["password"])
         password_hash = base64.b64encode(hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest()).decode("utf-8")
-        print(password_hash)
         if password_hash != user["Password"]:
             body = {
                 "err": "Password does not match for user.",
