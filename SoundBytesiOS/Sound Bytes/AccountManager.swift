@@ -123,9 +123,7 @@ class AccountManager: ObservableObject {
         users.append(username)
         print(users)
         self.defaults.set(users, forKey: "AllUsers")
-        DispatchQueue.main.async {
-            self.userAvailable = true
-        }
+        self.userAvailable = true
     }
     
     private func removeUser(_ username: String) {

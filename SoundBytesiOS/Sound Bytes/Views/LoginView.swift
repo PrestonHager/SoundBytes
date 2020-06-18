@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftUI
+import Combine
 
 struct LoginView: View {
     @Environment(\.accountManager) var accountManager: AccountManager
@@ -19,9 +20,11 @@ struct LoginView: View {
     
     @State var disabled: Bool = false
     
+    private var loginSink: AnyCancellable? = nil
+    
     init(window: UIWindow? = nil) {
         self.window = window
-        _ = accountManager.$userAvailable.sink(receiveValue: self.loginCallback)
+        self.loginSink = accountManager.$userAvailable.sink(receiveValue: self.loginCallback)
     }
     
     var body: some View {
@@ -49,8 +52,10 @@ struct LoginView: View {
     func loginCallback(value: Bool) {
         print("Callback accessed with the value of \(value)")
         if (value) {
-            let contentView = MainContentView(window: self.window)
-            self.window!.rootViewController = UIHostingController(rootView: contentView)
+            DispatchQueue.main.async {
+                let contentView = MainContentView(window: self.window)
+                self.window!.rootViewController = UIHostingController(rootView: contentView)
+            }
         } else {
             self.disabled = false
             // TODO: show error for failure to log in.
