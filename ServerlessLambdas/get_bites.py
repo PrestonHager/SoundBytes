@@ -1,7 +1,9 @@
 class GetBites:
     def __init__(self):
+        global datetime
         # set up the databases
         import databases
+        import datetime
         self.database = databases.Databases()
 
     """
