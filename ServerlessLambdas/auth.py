@@ -14,15 +14,27 @@ class Auth:
     """
     def auth(self, event, context):
         self.database.init_users()
-        data = json.loads(event["body"])
         try:
-            user = self.database.users.get_item(Key = {"Username": data["username"]})["Item"]
+            data = json.loads(event["body"])
+        except:
+            body = {
+                "err": "The post body must be in JSON format.",
+                "cod": 21
+            }
+            return self.database.create_response(body, 400)
+        try:
+            user = self.database.users.get_item(Key = {"Username": data["username"].lower()})["Item"]
         except:
             body = {
                 "err": "Username was not found, or not given.",
                 "cod": 3
             }
-            print("username not found. data was " +  data["username"])
+            return self.database.create_response(body, 400)
+        if "password" not in data:
+            body = {
+                "err": "Password was not given.",
+                "cod": 4
+            }
             return self.database.create_response(body, 400)
         password_hash = base64.b64encode(hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest()).decode("utf-8")
         if password_hash != user["Password"]:
@@ -36,7 +48,7 @@ class Auth:
                 "err": "Please verify your email.",
                 "cod": 12
             }
-            print("email not verified for " +  data["username"] + ". declining login.");
+            print("email not verified for " +  data["username"].lower() + ". declining login.");
             return self.database.create_response(body, 400)
         # Generate a token
         self.database.init_auth_db()

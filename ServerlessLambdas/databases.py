@@ -77,7 +77,7 @@ class Databases:
         all_links.append(verify_link)
         self.verify_table.update_item(Key = {"LinkId": "-1"}, AttributeUpdates = {"AllLinks": {"Value": all_links}})
         self.verify_table.put_item(Item = {"LinkId": verify_link, "User": username})
-        return "https://9tr6xceawd.execute-api.us-west-2.amazonaws.com/dev/verify?usr=" + verify_link
+        return "https://api.soundbytes.xyz/dev/verify?usr=" + verify_link
 
     def generate_client_id(self, user, refresh_token, current_time):
         import random

@@ -35,7 +35,7 @@ class CreateAccount:
             }
             return self.database.create_response(body, 400)
         try:
-            self.database.users.get_item(Key = {"Username": data["username"]})["Item"]
+            self.database.users.get_item(Key = {"Username": data["username"].lower()})["Item"]
             body = {
                 "err": "Username is already taken.",
                 "cod": 5
@@ -51,10 +51,10 @@ class CreateAccount:
                 }
                 return self.database.create_response(body, 400)
             password_hash = base64.b64encode(hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest())
-            user = {"Username": data["username"], "Password": password_hash.decode("utf-8"), "Email": data["email"], "Verified": False, "Intrests": DEFAULT_INTRESTS}
+            user = {"Username": data["username"].lower(), "Password": password_hash.decode("utf-8"), "Email": data["email"], "Verified": False, "Intrests": DEFAULT_INTRESTS}
             # finally send an email to the user so they can verify it.
             self.database.init_verify_table()
-            verify_link = self.database.create_verify_link(data["username"])
+            verify_link = self.database.create_verify_link(data["username"].lower())
             ## TODO: add code for sending email
             client = boto3.client("ses")
             try:

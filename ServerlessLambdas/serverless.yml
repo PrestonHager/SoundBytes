@@ -87,7 +87,6 @@ functions:
       - http:
           path: create-account
           method: post
-
   refresh-client:
     handler: refresh_client.run
     events:

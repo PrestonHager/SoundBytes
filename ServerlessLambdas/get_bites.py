@@ -31,6 +31,23 @@ class GetBites:
                 "cod": 6
             }
             return self.database.create_response(body, 403)
+        current_time = int((datetime.datetime.now() - datetime.datetime(year=1970, month=1, day=1, hour=0, second=0)).total_seconds())
+        if client_item["Expires"]+1800 <= current_time:
+            self.database.auth_table.delete_item(Key = {"ClientId": token})
+            all_ids = self.database.auth_table.get_item(Key = {"ClientId": "-1"})["Item"]["AllIds"]
+            all_ids.pop(all_ids.index(token))
+            self.database.auth_table.update_item(Key = {"ClientId": "-1"}, AttributeUpdates = {"AllIds": {"Value": all_ids}})
+            body = {
+                "err": "Client ID token has expired.",
+                "cod": 8
+            }
+            return self.database.create_response(body, 400)
+        if client_item["Expires"] <= current_time:
+            body = {
+                "err": "Client ID token has expired. Please refresh.",
+                "cod": 7
+            }
+            return self.database.create_response(body, 400)
         body = {
             "cod": 100,
             "all_posts": [{"t":"Title Goes Here","b":"This is a body paragraph, the maximum is 256 characters long."}]
