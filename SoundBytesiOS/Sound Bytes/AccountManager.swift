@@ -21,6 +21,12 @@ class AccountManager: ObservableObject {
             self.objectWillChange.send()
         }
     }
+    
+    @Published var requestError: String? = nil {
+        willSet {
+            self.objectWillChange.send()
+        }
+    }
 
     func checkCurrent() -> Bool {
         let currentUser = self.defaults.string(forKey: "CurrentUser")
@@ -91,26 +97,27 @@ class AccountManager: ObservableObject {
         guard var url = ProcessInfo.processInfo.environment["LAMBDA_ENDPOINT"] else {
             return
         }
-        url += "auth"
+        url += "/dev/auth"
         let json = [
             "username": username,
             "password": password
         ]
         let data = try! JSONSerialization.data(withJSONObject: json, options: [])
-        networkManager.post(url: url, data: data) {response in
-            if (response.error != nil) {
-                print("Error: " + response.error)
-                self.userAvailable = false
-            } else {
-                print(response)
-                // TODO: move this to the keychain or something more secure.
-                self.defaults.set(response.accessToken, forKey: "\(username)AccessToken")
-                self.defaults.set(response.refreshToken, forKey: "\(username)RefreshToken")
-                self.defaults.set(response.issuedAt, forKey: "\(username)TokenIssueTime")
-                self.defaults.set(response.expiresAt, forKey: "\(username)TokenExpirationTime")
-                self.addUser(username)
-            }
-        }
+        networkManager.post(url: url, data: data, onCompletion: {response in
+            print(response)
+            // TODO: move this to the keychain or something more secure.
+            self.defaults.set(response.accessToken, forKey: "\(username)AccessToken")
+            self.defaults.set(response.refreshToken, forKey: "\(username)RefreshToken")
+            self.defaults.set(response.issuedAt, forKey: "\(username)TokenIssueTime")
+            self.defaults.set(response.expiresAt, forKey: "\(username)TokenExpirationTime")
+            self.addUser(username)
+        }, onError: { response in
+            self.requestError = response.error
+            self.userAvailable = false
+        }, onDecodingError: { data in
+            self.requestError = "Decoding error.\n" + String(decoding: data, as: UTF8.self)
+            self.userAvailable = false
+        })
     }
     
     func signup(_ email: String, _ username: String, _ password: String) {

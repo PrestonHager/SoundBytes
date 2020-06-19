@@ -14,22 +14,17 @@ struct LoginContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                Text("Welcome to Sound Bytes!\nAre you new or do you already have an account?")
-                    .font(.system(size: 24))
-                    .multilineTextAlignment(.center)
-                    .padding()
+                LoginView(window: window!)
                 NavigationLink(destination: SignupView(window: window!)) {
-                    Text("Signup")
-                    .font(.system(size: 18))
-                    .padding()
-                }
-                NavigationLink(destination: LoginView(window: window!)) {
-                    Text("Login")
+                    Text("Don't have an account? Sign Up")
+                        .foregroundColor(.primary)
                     .font(.system(size: 18))
                     .padding()
                 }
             }
-            .navigationBarTitle(Text("Sound Bytes"))
+            .background(LinearGradient(gradient: Gradient(colors: [Color(hex: "#fb4aff"), Color(hex: "#65e8ff")]), startPoint: .top, endPoint: .bottom)
+            .edgesIgnoringSafeArea(.all))
+//            .navigationBarTitle(Text("Sound Bytes"))
             // TODO: add a background for the splash page.
         }
     }

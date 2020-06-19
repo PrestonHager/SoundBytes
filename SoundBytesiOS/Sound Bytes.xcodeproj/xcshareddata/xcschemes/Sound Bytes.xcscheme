@@ -73,7 +73,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "LAMBDA_ENDPOINT"
-            value = "https://9tr6xceawd.execute-api.us-west-2.amazonaws.com/dev/"
+            value = "https://api.soundbytes.xyz"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
