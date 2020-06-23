@@ -15,13 +15,14 @@ struct LoginContentView: View {
         NavigationView {
             VStack {
                 LoginView(window: window!)
-                NavigationLink(destination: SignupView(window: window!)) {
+                NavigationLink(destination: SignupContentView(window: window!)) {
                     Text("Don't have an account? Sign Up")
-                        .foregroundColor(.primary)
-                    .font(.system(size: 18))
-                    .padding()
+                        .foregroundColor(.black)
+                        .font(.system(size: 18))
+                        .padding()
                 }
             }
+            .navigationViewStyle(StackNavigationViewStyle())
             .background(LinearGradient(gradient: Gradient(colors: [Color(hex: "#fb4aff"), Color(hex: "#65e8ff")]), startPoint: .top, endPoint: .bottom)
             .edgesIgnoringSafeArea(.all))
 //            .navigationBarTitle(Text("Sound Bytes"))

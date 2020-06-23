@@ -15,9 +15,9 @@ struct SignupView: View {
     var window: UIWindow?
     
     @State var email: String = ""
-    @State var username: String = "TestUser"
-    @State var password: String = "Password#1"
-    @State var confirmPassword: String = "Password#1"
+    @State var username: String = ""
+    @State var password: String = ""
+    @State var confirmPassword: String = ""
     @State var agreeToTerms = false
     
     @State var showSheet = false
@@ -28,18 +28,30 @@ struct SignupView: View {
     
     var body: some View {
         VStack {
-            TextField("Email", text: $email)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.horizontal)
-            TextField("Username", text: $username)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.horizontal)
-            TextField("Password", text: $password)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.horizontal)
-            TextField("Confirm Password", text: $confirmPassword)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.horizontal)
+            Text("Signup")
+                .font(.largeTitle)
+                .foregroundColor(.white)
+            Spacer()
+            VStack {
+                Button(action: {}) {
+                    Text("Continue with Apple")
+                        .padding()
+                }
+                    .modifier(ActionButtonStyle())
+            }
+            Divider()
+                .padding([.horizontal, .bottom])
+            VStack(spacing: 15) {
+                TextField("Email", text: $email)
+                    .modifier(FormTextFieldStyle())
+                TextField("Username", text: $username)
+                    .modifier(FormTextFieldStyle())
+                SecureField("Password", text: $password)
+                    .modifier(FormTextFieldStyle())
+                SecureField("Confirm Password", text: $confirmPassword)
+                    .modifier(FormTextFieldStyle())
+            }
+                .padding([.leading, .trailing], 30)
             HStack {
                 Image(systemName: agreeToTerms ? "checkmark.square.fill" : "square")
                     .imageScale(.large)
@@ -67,11 +79,15 @@ struct SignupView: View {
                         }
                     }
                 }
+                    .foregroundColor(.black)
             }
+                .padding(.top)
             Button(action: self.signupAction) {
                 Text("Signup")
                     .padding()
             }
+                .modifier(ActionButtonStyle())
+            Spacer()
         }
         .sheet(isPresented: $showSheet) {
             if self.activeSheet == .termsAndConditions {
@@ -83,7 +99,6 @@ struct SignupView: View {
         .alert(isPresented: $showErrorMessage) {
             Alert(title: Text("Error in Signup"), message: Text(errorMessage), dismissButton: .default(Text("Ok")))
         }
-        .navigationBarTitle("Signup")
     }
     
     func signupAction() {
@@ -129,6 +144,6 @@ enum ActiveSheet {
 
 struct SignupView_Previews: PreviewProvider {
     static var previews: some View {
-        SignupView()
+        SignupContentView(window: UIWindow())
     }
 }

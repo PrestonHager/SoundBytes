@@ -15,6 +15,8 @@ struct LoginView: View {
     @Environment(\.audioController) var audioController: AudioController
     var window: UIWindow?
 
+    @ObservedObject private var kGuardian = KeyboardGuardian(textFieldCount: 2)
+    
     @State var username: String = "TestUser"
     @State var password: String = "Password#1"
     
@@ -48,15 +50,11 @@ struct LoginView: View {
             Spacer()
             VStack(spacing: 15) {
                 TextField("Username", text: $username)
-                    .padding(8)
-                    .background(Color(hex: "#ddd"))
-                    .cornerRadius(5.0)
-                    .shadow(radius: 5)
+                    .modifier(FormTextFieldStyle())
+                    .background(GeometryGetter(rect: $kGuardian.rects[0]))
                 SecureField("Password", text: $password)
-                    .padding(8)
-                    .background(Color(hex: "#ddd"))
-                    .cornerRadius(5.0)
-                    .shadow(radius: 5)
+                    .modifier(FormTextFieldStyle())
+                    .background(GeometryGetter(rect: $kGuardian.rects[0]))
             }
                 .padding([.leading, .trailing], 30)
             HStack {
@@ -70,19 +68,16 @@ struct LoginView: View {
                     Text("Login")
                         .padding()
                 }
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .background(Color(hex: "#fb3cf0"))
-                    .cornerRadius(15.0)
+                    .modifier(ActionButtonStyle())
             }
-            .padding(.horizontal, 60)
-            .padding(.vertical, 15)
             Spacer()
         }
+        .offset(y: kGuardian.slide).animation(.easeInOut(duration: 1.0))
         .alert(isPresented: $showLoginError) {
             Alert(title: Text("Login Error"), message: Text(self.loginErrorMessage ?? "No error to show."), dismissButton: .default(Text("Ok")))
         }
+        .onAppear { self.kGuardian.addObserver() }
+        .onDisappear { self.kGuardian.removeObserver() }
     }
     
     func loginCallback(value: Bool) {
