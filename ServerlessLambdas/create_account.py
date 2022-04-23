@@ -1,6 +1,6 @@
 # Define constants for sending emails.
-EMAIL_BODY_TEXT = "Welcome to Sound Bytes!\r\n\r\nPlease verify your email by clicking the link below, or pasting it into your web browser.\r\n{link}"
-EMAIL_BODY_HTML = "<html><head></head><body><h3>Welcome to Sound Bytes!</h3><p>Please verify your email by clicking the link below, or pasting it into your web browser.</p><p><a href=\"{link}\">{link}</a></p>"
+EMAIL_BODY_TEXT = "Welcome to Sound Bytes!\r\n\r\nPlease verify your email by clicking the link below, or pasting it into your web browser.\r\n{link}\r\n\r\nIf you don't think you should be recieving this email or want to unsubscribe from a newsletter, use this link: {unsubscribe_link}."
+EMAIL_BODY_HTML = "<html><head></head><body><h3>Welcome to Sound Bytes!</h3><p>Please verify your email by clicking the link below, or pasting it into your web browser.</p><p><a href=\"{link}\">{link}</a></p><footer><p>If you don't think you should be recieving this email or want to unsubscribe from a newsletter, click <a href=\"{unsubscribe_link}\">here</a></footer></body>"
 
 class CreateAccount:
     def __init__(self):
@@ -51,14 +51,15 @@ class CreateAccount:
                 }
                 return self.database.create_response(body, 400)
             password_hash = base64.b64encode(hashlib.blake2b(bytes(data["password"], "utf-8"), salt=bytes(os.getenv('SALT', "123456abcdef"), "utf-8")).digest())
-            user = {"Username": data["username"].lower(), "Password": password_hash.decode("utf-8"), "Email": data["email"], "Verified": False, "Intrests": DEFAULT_INTRESTS}
+            user = {"Username": data["username"].lower(), "Password": password_hash.decode("utf-8"), "Email": data["email"], "Verified": False, "Intrests": DEFAULT_INTRESTS, "AuthToken": None}
             # finally send an email to the user so they can verify it.
             self.database.init_verify_table()
             verify_link = self.database.create_verify_link(data["username"].lower())
+            unsubscribe_link = self.database.create_unsubscribe_link(data["email"].lower())
             ## TODO: add code for sending email
             client = boto3.client("ses")
             try:
-                client.send_email(Destination={"ToAddresses": [data["email"]]}, Message={"Body": {"Html": {"Charset":"utf-8", "Data":EMAIL_BODY_HTML.format(link=verify_link)}, "Text": {"Charset":"utf-8", "Data":EMAIL_BODY_TEXT.format(link=verify_link)}}, "Subject": {"Charset":"utf-8","Data":"Welcome to Sound Bytes!"}}, Source="Sound Bytes Company <sound.bytes.co@gmail.com>")
+                client.send_email(Destination={"ToAddresses": [data["email"]]}, Message={"Body": {"Html": {"Charset":"utf-8", "Data":EMAIL_BODY_HTML.format(link=verify_link, unsubscribe_link=unsubscribe_link)}, "Text": {"Charset":"utf-8", "Data":EMAIL_BODY_TEXT.format(link=verify_link, unsubscribe_link=unsubscribe_link)}}, "Subject": {"Charset":"utf-8","Data":"Welcome to Sound Bytes!"}}, Source="Sound Bytes Company <sound.bytes.co@gmail.com>")
             except ClientError as e:
                 print(e.response["Error"]["Message"])
                 body = {

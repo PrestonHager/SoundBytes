@@ -1,3 +1,5 @@
+org: prestonhager
+app: soundbytes
 service: soundbytes
 
 # You can pin your service to only deploy with a specific Serverless version
@@ -8,46 +10,50 @@ provider:
   name: aws
   runtime: python3.6
 
+  httpApi:
+    authorizers:
+      myAuthorizer:
+        type: token
+        functionName: authorizer
+        identitySource:
+          - $request.header.Auth
+          - $request.header.Authorization
+
 # you can overwrite defaults here
   stage: ${opt:stage, 'dev'}
-  region: us-west-2
+  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "s3:PutObject"
-      Resource: arn:aws:s3:::soundbytes-bites/*
-    - Effect: Allow
-      Action:
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-      Resource: arn:aws:dynamodb:*:*:table/soundbytes-bites-metadata
-    - Effect: Allow
-      Action:
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource: arn:aws:dynamodb:*:*:table/soundbytes-auth
-    - Effect: Allow
-      Action:
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-      Resource: arn:aws:dynamodb:*:*:table/soundbytes-users
-    - Effect: Allow
-      Action:
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource: arn:aws:dynamodb:*:*:table/soundbytes-verify
-    - Effect: Allow
-      Action:
-        - ses:SendEmail
-      Resource: arn:aws:ses:*:*:identity/*
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "s3:PutObject"
+          Resource: arn:aws:s3:::soundbytes-bites/*
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+          Resource: arn:aws:dynamodb:*:*:table/soundbytes-bites-metadata
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+          Resource: arn:aws:dynamodb:*:*:table/soundbytes-users
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: arn:aws:dynamodb:*:*:table/soundbytes-verify
+        - Effect: Allow
+          Action:
+            - ses:SendEmail
+          Resource: arn:aws:ses:*:*:identity/*
 
 # you can define service wide environment variables here
 #  environment:
@@ -63,12 +69,16 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
+  authorizer:
+    handler: authorizer.run
   get-bites:
     handler: get_bites.run
     events:
       - http:
           path: get-bites
           method: get
+          authorizer:
+            name: myAuthorizer
   verify-email:
     handler: verify_email.run
     events:
@@ -79,7 +89,7 @@ functions:
     handler: auth.run
     events:
       - http:
-          path: auth
+          path: login
           method: post
   create-account:
     handler: create_account.run
@@ -87,18 +97,14 @@ functions:
       - http:
           path: create-account
           method: post
-  refresh-client:
-    handler: refresh_client.run
-    events:
-      - http:
-          path: refresh-client
-          method: post
   upload-bite:
     handler: upload_bite.run
     events:
       - http:
           path: upload-bite
           method: post
+          authorizer:
+            name: myAuthorizer
 
 #    Define function environment variables here
 #    environment:
@@ -120,19 +126,6 @@ resources:
             AttributeType: S
        KeySchema:
           - AttributeName: BiteId
-            KeyType: HASH
-       ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-   DynamoDBTableAuth:
-     Type: AWS::DynamoDB::Table
-     Properties:
-       TableName: soundbytes-auth
-       AttributeDefinitions:
-          - AttributeName: ClientId
-            AttributeType: S
-       KeySchema:
-          - AttributeName: ClientId
             KeyType: HASH
        ProvisionedThroughput:
           ReadCapacityUnits: 5
@@ -163,3 +156,20 @@ resources:
        ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
+
+# Custom Plugin
+plugins:
+  - serverless-domain-manager
+  - serverless-python-requirements
+  - serverless-offline
+custom:
+  serverless-offline:
+    noPrependStageInUrl: 1
+  customDomain:
+    domainName: api.soundbytes.xyz
+    basePath: ''
+    stage: ${self:provider.stage}
+    certificateName: 'soundbytes.xyz'
+    createRoute53Record: false
+  pythonRequirements:
+    dockerizePip: true

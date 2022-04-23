@@ -1,8 +1,9 @@
 class Auth:
     def __init__(self):
         # global imports
-        global base64, datetime, hashlib, json, os, random
-        import base64, datetime, hashlib, json, os, random
+        global base64, Branca, datetime, hashlib, json, os, random, secrets
+        import base64, datetime, hashlib, json, os, random, secrets
+        from branca import Branca
         # set up the databases
         import databases
         self.database = databases.Databases()
@@ -51,16 +52,12 @@ class Auth:
             print("email not verified for " +  data["username"].lower() + ". declining login.");
             return self.database.create_response(body, 400)
         # Generate a token
-        self.database.init_auth_db()
-        current_time = int((datetime.datetime.now() - datetime.datetime(year=1970, month=1, day=1, hour=0, second=0)).total_seconds())
-        refresh_token = "%032x" % random.randrange(16**32)
-        access_token = self.database.generate_client_id(user["Username"], refresh_token, current_time)
+        auth_token = secrets.token_hex(64)
+        branca_token = Branca(os.getenv('BRANCA_KEY', "d8b647974af437bdf761099cec8d3e5ac263037d02c8ad8498efc7eef27e0a33"))
+        token = branca_token.encode(f"{user['Username']}:{auth_token}")
+        user["AuthToken"] = auth_token
         body = {
-            "tkn": access_token, # used to request resources or attach to uploaded resources.
-            "rt": refresh_token, # the refresh token is used to get a new access token.
-            "iat": current_time, # the issued at time is the current time.
-            "exp": current_time + 3600, # the access token is valid for 1 hour.
-            "cod": 100, # the code is a success.
+            "auth_token": token,
         }
         response = self.database.create_response(body, 201)
         return response

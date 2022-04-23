@@ -20,3 +20,10 @@ __pycache__/
 
 # Serverless directories
 .serverless/
+.requirements/
+
+# Mac Files
+.DS_Store
+
+# Test files
+test*
