@@ -12,12 +12,12 @@ provider:
 
   httpApi:
     authorizers:
-      myAuthorizer:
-        type: token
-        functionName: authorizer
-        identitySource:
-          - $request.header.Auth
-          - $request.header.Authorization
+      # myAuthorizer:
+      #   type: token
+      #   functionName: authorizer
+      #   identitySource:
+      #     - $request.header.Auth
+      #     - $request.header.Authorization
 
 # you can overwrite defaults here
   stage: ${opt:stage, 'dev'}
@@ -78,7 +78,7 @@ functions:
           path: get-bites
           method: get
           authorizer:
-            name: myAuthorizer
+            name: authorizer
   verify-email:
     handler: verify_email.run
     events:
@@ -104,7 +104,7 @@ functions:
           path: upload-bite
           method: post
           authorizer:
-            name: myAuthorizer
+            name: authorizer
 
 #    Define function environment variables here
 #    environment:
@@ -113,10 +113,10 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
   Resources:
-   S3Bucket:
-     Type: AWS::S3::Bucket
-     Properties:
-       BucketName: soundbytes-bites
+   # S3Bucket:
+   #   Type: AWS::S3::Bucket
+   #   Properties:
+   #     BucketName: soundbytes-bites
    DynamoDBTable:
      Type: AWS::DynamoDB::Table
      Properties:
@@ -173,3 +173,4 @@ custom:
     createRoute53Record: false
   pythonRequirements:
     dockerizePip: true
+    slim: true
