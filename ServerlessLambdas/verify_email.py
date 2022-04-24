@@ -12,16 +12,14 @@ class VerifyEmail:
         self.database.init_verify_table()
         self.database.init_users()
         try:
-            link_id = event["queryStringParameters"]["usr"]
+            link_id = event["pathParameters"]["link_id"]
             username = self.database.verify_table.get_item(Key = {"LinkId": link_id})["Item"]["User"]
+            # TODO: verify that the token was created by the server by checking the username inside the token (using the server key of course)
         except:
             return RESPONSE_FAILURE
         # if everything is a success then set Verified to True in user table.
         self.database.users.update_item(Key = {"Username": username}, AttributeUpdates = {"Verified": {"Value": True}})
-        # remove the link_id from the verify table, and the list of all ids.
-        all_links = self.database.verify_table.get_item(Key = {"LinkId": "-1"})["Item"]["AllLinks"]
-        all_links.pop(all_links.index(link_id))
-        self.database.verify_table.update_item(Key = {"LinkId": "-1"}, AttributeUpdates = {"AllLinks": {"Value": all_links}})
+        # remove the link_id from the verify table
         self.database.verify_table.delete_item(Key = {"LinkId": link_id})
         return RESPONSE_SUCCESS
 

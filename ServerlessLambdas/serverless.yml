@@ -50,29 +50,33 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource: arn:aws:dynamodb:*:*:table/soundbytes-verify
-        - Effect: Allow
-          Action:
-            - ses:SendEmail
-          Resource: arn:aws:ses:*:*:identity/*
 
 # you can define service wide environment variables here
 #  environment:
 #    variable1: value1
 
 # you can add packaging information here
-#package:
-#  include:
-#    - include-me.py
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.py
-#    - exclude-me-dir/**
+package:
+  patterns:
+    - '!requirements/**'
+    - '!node_modules/**'
+    - '!Dockerfile'
+ # include:
+ #   - include-me.py
+ #   - include-me-dir/**
+ # exclude:
+ #   - exclude-me.py
+ #   - exclude-me-dir/**
 
 functions:
   authorizer:
     handler: authorizer.run
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
   get-bites:
     handler: get_bites.run
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
     events:
       - http:
           path: get-bites
@@ -81,24 +85,32 @@ functions:
             name: authorizer
   verify-email:
     handler: verify_email.run
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
     events:
       - http:
-          path: verify
+          path: verify/{link_id}
           method: get
   auth:
     handler: auth.run
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
     events:
       - http:
           path: login
           method: post
   create-account:
     handler: create_account.run
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
     events:
       - http:
           path: create-account
           method: post
   upload-bite:
     handler: upload_bite.run
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
     events:
       - http:
           path: upload-bite
@@ -173,4 +185,6 @@ custom:
     createRoute53Record: false
   pythonRequirements:
     dockerizePip: true
-    slim: true
+    layer: true
+    dockerImage: image.img
+    # dockerFile: Dockerfile

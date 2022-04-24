@@ -1,0 +1,6 @@
+Welcome to Sound Bytes!
+
+Please verify your email by clicking the link below, or pasting it into your web browser.
+{link}
+
+If you don't think you should be recieving this email or want to unsubscribe from a newsletter, use this link: https://soundbytes.xyz/unsubscribe.

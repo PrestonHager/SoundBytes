@@ -6,7 +6,6 @@ class Databases:
         # set all the default class variables to None
         self.dynamo_db = None
         self.bites = None
-        self.auth_table = None
         self.users = None
         self.verify_table = None
         self.s3_connection = None
@@ -19,7 +18,7 @@ class Databases:
 
     def _init_dynamodb(self):
         # set the dynamo_db and dynamo_table variables to their
-        self.dynamo_db = boto3.resource("dynamodb", region_name="us-west-2")
+        self.dynamo_db = boto3.resource("dynamodb", region_name="us-east-1")
         # return True from the process
         return True
 
@@ -28,13 +27,6 @@ class Databases:
         # correct resources.
         self.bites = self.dynamo_db.Table("soundbytes-bites-metadata")
         # return True from the process.
-        return True
-
-    def init_auth_db(self):
-        self._init_dynamodb()
-        # set to point at auth table.
-        self.auth_table = self.dynamo_db.Table("soundbytes-auth")
-        # return True from the process
         return True
 
     def init_users(self):
@@ -74,32 +66,21 @@ class Databases:
         }
 
     def create_verify_link(self, username):
-        import random
-        all_links = self.verify_table.get_item(Key = {"LinkId": "-1"})["Item"]["AllLinks"]
-        verify_link = "%016x" % random.randrange(16**16)
-        while verify_link in all_links:
-            verify_link = "%016x" % random.randrange(16**16)
-        all_links.append(verify_link)
-        self.verify_table.update_item(Key = {"LinkId": "-1"}, AttributeUpdates = {"AllLinks": {"Value": all_links}})
-        self.verify_table.put_item(Item = {"LinkId": verify_link, "User": username})
-        return "https://api.soundbytes.xyz/dev/verify?usr=" + verify_link
+        import random, secrets
+        from branca import Branca
+        # all_links = self.verify_table.get_item(Key = {"LinkId": "-1"})["Item"]["AllLinks"]
+        key = "%016x" % random.randrange(16**16)
+        # all_links.append(verify_link)
+        # self.verify_table.update_item(Key = {"LinkId": "-1"}, AttributeUpdates = {"AllLinks": {"Value": all_links}})
+        key = secrets.token_hex(32)
+        branca = Branca(key)
+        verify_link = branca.encode(username + ":" + key)
+        self.verify_table.put_item(Item = {"LinkId": verify_link, "User": username, "BrancaKey": key})
+        return "https://api.soundbytes.xyz/dev/verify/" + verify_link
 
     def create_unsubscribe_link(self, email):
         from urllib import quote_plus
         return "https://api.soundbytes.xyz/dev/unsubscribe?email=" + quote_plus(email)
-
-    def generate_client_id(self, user, refresh_token, current_time):
-        import random
-        # all_ids = self.auth_table.get_item(Key = {"ClientId": "-1"})["Item"]["AllIds"]
-        id = "%032x" % random.randrange(16**32)
-        # while id in all_ids:
-        #     id = "%032x" % random.randrange(16**32)
-        # all_ids.append(id)
-        # self.auth_table.update_item(Key = {"ClientId": "-1"}, AttributeUpdates = {"AllIds": {"Value": all_ids}})
-        auth_token = None
-        client_item = {"ClientId": id, "RefreshToken": refresh_token, "IssueTime": current_time, "Expires": current_time+3600, "User": user}
-        self.auth_table.put_item(Item = client_item)
-        return id
 
     def get_credentials(self, session_name, resource_name=None):
         if resource_name == None:
@@ -127,5 +108,41 @@ class Databases:
         else:
             return False
 
-    def send_email(self, to_address):
-        pass
+    def send_email(self, to_address, template, subject, **kwargs):
+        import smtplib, ssl, os
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+        smtp_server = "smtp.zoho.com"
+        port = 587
+        # Create a secure SSL context
+        context = ssl.create_default_context()
+        sender_email = "support@soundbytes.xyz"
+        password = os.getenv("APP_PASSWORD", "")
+        message = MIMEMultipart("alternative")
+        message["Subject"] = subject
+        message["From"] = sender_email
+        message["To"] = to_address
+        message["List-Unsubscribe"] = "<mailto:unsubscribe@soundbytes.xyz?subject=Unsubscribe>, <http://soundbytes.xyz/unsubscribe>"
+        # message_header = "To: {to}\nFrom: \"Sound Bytes\" <{sender}>\nList-Unsubscribe: <mailto:unsubscribe@soundbytes.xyz?subject=Unsubscribe>, <http://soundbytes.xyz/unsubscribe>\nSubject: Welcome to SoundBytes".format(to=to_address, sender=sender_email)
+        with open("email_templates/"+template+'.txt', 'r') as f_in:
+            text_template = f_in.read()
+            text = MIMEText(text_template.format(**kwargs), "plain")
+            message.attach(text)
+        with open("email_templates/"+template+'.html', 'r') as f_in:
+            html_template = f_in.read()
+            html = MIMEText(html_template.format(**kwargs), "html")
+            message.attach(html)
+        # Try to log in to server and send email
+        try:
+            server = smtplib.SMTP(smtp_server, port)
+            server.ehlo() # Can be omitted
+            server.starttls(context=context) # Secure the connection
+            server.ehlo() # Can be omitted
+            server.login(sender_email, password)
+            # Send email here
+            server.sendmail(sender_email, to_address, message.as_string())
+        except Exception as e:
+            import traceback
+            print(traceback.format_exc())
+        finally:
+            server.quit()
